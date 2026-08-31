@@ -5,7 +5,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import axios from 'axios';
 import API_URL from '../../config';
-import { HiBadgeCheck, HiCalendar, HiChatAlt, HiChevronLeft, HiChevronRight,HiCollection,HiHeart,HiLocationMarker,HiOutlineHeart,HiOutlineHome,HiOutlineUserGroup,HiOutlineViewGrid,HiX } from 'react-icons/hi';
+import { HiBadgeCheck, HiCalendar, HiChatAlt, HiChevronLeft, HiChevronRight, HiCollection, HiHeart, HiLocationMarker, HiOutlineHeart, HiOutlineHome, HiOutlineUserGroup, HiOutlineViewGrid, HiX } from 'react-icons/hi';
 
 const PropertyDetails = () => {
     const { id } = useParams();
@@ -28,122 +28,114 @@ const PropertyDetails = () => {
     });
     const [isInWishlist, setIsInWishlist] = useState(false);
 
-    useEffect(()=>{
-        const fetchDetails=async()=>{
+    useEffect(() => {
+        const fetchDetails = async () => {
             try {
                 setLoading(true);
-                const res=await axios.get(`${API_URL}/api/property/${id}`,{
-                    headers:token ? {Authorization: `Bearer ${token}`} : {}
-                });
+                const res = await axios.get(`${API_URL}/api/property/${id}`, {
+                    headers: token ? { Authorization: `Bearer ${token}` } : {}
+                }); // give property details whether token is found or not 
                 setProperty(res.data.property);
                 setSimilarProperties(res.data.similarProperties || []);
 
-                if(user && user.role==='buyer')
-                {
-                    const wishRes= await axios.get(`${API_URL}/api/wishlist`,{
-                        headers:{Authorization:`Bearer ${token}`}
+                if (user && user.role === 'buyer') {
+                    const wishRes = await axios.get(`${API_URL}/api/wishlist`, {
+                        headers: { Authorization: `Bearer ${token}` }
                     });
-                    const found=wishRes.data.some((item)=>item.property?._id===id)
+                    const found = wishRes.data.some((item) => item.property?._id === id)
                     setIsInWishlist(found);
                 }
                 setLoading(false);
-            } 
+            }
             catch (err) {
                 setError("Failed to load property details");
                 setLoading(false);
             }
         };
         fetchDetails();
-    },[id,user,token]);
+    }, [id, user, token]);
 
     //to handle wishlist toggle 
-    const handleWishlistToggle=async()=>{
-        if(!user) return navigate("/login")
+    const handleWishlistToggle = async () => {
+        if (!user) return navigate("/login")
         try {
-            if(isInWishlist)
-            {
-                await axios.delete(`${API_URL}/api/wishlist/${id}`,{
-                    headers:{Authorization:`Bearer ${token}`}
+            if (isInWishlist) {
+                await axios.delete(`${API_URL}/api/wishlist/${id}`, {
+                    headers: { Authorization: `Bearer ${token}` }
                 })
                 setIsInWishlist(false);
             }
-            else
-            {
-                await axios.post(`${API_URL}/api/wishlist/${id}`,{},{
-                    headers:{Authorization:`Bearer ${token}`}
+            else {
+                await axios.post(`${API_URL}/api/wishlist/${id}`, {}, {
+                    headers: { Authorization: `Bearer ${token}` }
                 })
                 setIsInWishlist(true);
             }
-            } 
+        }
         catch (err) {
             alert("Failed to update wishlist.");
         }
     }
 
     //to handle inquiry submit
-    const handleInquirySubmit=async(e)=>{
+    const handleInquirySubmit = async (e) => {
         e.preventDefault();
-        if(!user) return navigate("/login");
-        if(user.role!=='buyer') return alert("Only buyers can send inquiry");
-        setInquiryStatus({...inquiryStatus,loading:true});
+        if (!user) return navigate("/login");
+        if (user.role !== 'buyer') return alert("Only buyers can send inquiry");
+        setInquiryStatus({ ...inquiryStatus, loading: true });
 
         try {
-            await axios.post(`${API_URL}/api/inquiry`,{
-                propertyId:id,
-                message:inquiry.message,
-            },{headers:{Authorization:`Bearer ${token}`}});
+            await axios.post(`${API_URL}/api/inquiry`, {
+                propertyId: id,
+                message: inquiry.message,
+            }, { headers: { Authorization: `Bearer ${token}` } });
 
-            setInquiryStatus({loading:false,success:true,error:null});
-            setInquiry({...inquiry,message:""});
-
-        } 
+            setInquiryStatus({ loading: false, success: true, error: null });
+            setInquiry({ ...inquiry, message: "" }); //keeps the other properties inside inquiry,but clears the message
+        }
         catch (err) {
             setInquiryStatus({
-                loading:false,
-                success:false,
-                error:"Failed to send inquiry"
+                loading: false,
+                success: false,
+                error: "Failed to send inquiry"
             });
         }
     }
 
     // to start a chat 
-    const handleChatStart=async()=>{
-        if(!user) return navigate("/login");
-        if(user.role!=="buyer") return alert("Only buyers can chat with sellers");
+    const handleChatStart = async () => {
+        if (!user) return navigate("/login");
+        if (user.role !== "buyer") return alert("Only buyers can chat with sellers");
 
         try {
-            const res=await axios.post(`${API_URL}/api/chat/start`,{
-                propertyId:id,
-                sellerId:property.seller._id
-            },{headers:{Authorization:`Bearer ${token}`}});
-            const chat=res.data;
-            await axios.post(`${API_URL}/api/chat/send`,{
-                chatId:chat._id,
-                text:`(Context: Interested in property "${property.title}")`,
-                image:property.images[0],
-            },{headers:{Authorization:`Bearer ${token}`}});
-            navigate("/chat-messages",{state:{chat}});
-        } 
+            const res = await axios.post(`${API_URL}/api/chat/start`, {
+                propertyId: id,
+                sellerId: property.seller._id
+            }, { headers: { Authorization: `Bearer ${token}` } });
+            const chat = res.data;
+            await axios.post(`${API_URL}/api/chat/send`, {
+                chatId: chat._id,
+                text: `(Context: Interested in property "${property.title}")`,
+                image: property.images[0],
+            }, { headers: { Authorization: `Bearer ${token}` } });
+            navigate("/chat-messages", { state: { chat } });
+        }
         catch (err) {
-            console.error("Error starting chat : ",err);
+            console.error("Error starting chat : ", err);
             alert("Failed to start a chat");
         }
     };
-    const [lightboxIndex, setLightboxIndex] = useState(null);
-    if(loading)
-    {
+    if (loading) {
         return (
             <div className="loader-full-page">
                 <div className="loader">
-
                 </div>
             </div>
         )
     }
-    if(error || !property)
-    {
+    if (error || !property) {
         return (
-            <div className='container' style={{padding:'4rem',textAlign:"center"}}>
+            <div className='container' style={{ padding: '4rem', textAlign: "center" }}>
                 {error || "Property not found"}
             </div>
         );
@@ -155,67 +147,71 @@ const PropertyDetails = () => {
         maximumFractionDigits: 0,
     }).format(property.price);
 
+    const [lightboxIndex, setLightboxIndex] = useState(null); // used to create an image lightbox/gallery
     const openLightbox = (index) => setLightboxIndex(index);
     const closeLightbox = () => setLightboxIndex(null);
     const nextImage = () =>
         setLightboxIndex((prev) => (prev + 1) % property.images.length);
     const prevImage = () =>
         setLightboxIndex(
-        (prev) => (prev - 1 + property.images.length) % property.images.length,
+            (prev) => (prev - 1 + property.images.length) % property.images.length,
         ); // open an image and go to next or prev one 
 
 
 
     return (
         <div className={s.pageContainer}>
-            <Navbar/>
+            <Navbar />
             <main className={s.mainContainer}>
                 <nav className={s.breadcrumbs}>
                     <Link to="/" className={s.breadcrumbLink}>Home</Link>
-                    <HiChevronRight/>
+                    <HiChevronRight />
                     <Link to="/properties" className={s.breadcrumbLink}>Listings</Link>
-                    <HiChevronRight/>
+                    <HiChevronRight />
                     <span className={s.breadcrumbCurrent}>{property.title}</span>
                 </nav>
                 <div className={s.galleryContainer}>
                     <div className={s.galleryGrid}
-                          style={{
+                        style={{
                             gridTemplateColumns:
                                 property.images.length > 1 ? "repeat(4, 1fr)" : "1fr",
                             gridTemplateRows:
                                 property.images.length > 1 ? "repeat(2, 180px)" : "400px",
-                            }}
+                        }}
                     >
-                        <div className={s.galleryMainItem(property.images.length>0)} 
-                             onClick={()=>openLightbox(0)}>
-                             
-                             <img src={property.images[0]} alt="property image" className={s.galleryImage}/>
+                        <div className={s.galleryMainItem(property.images.length > 0)}
+                            onClick={() => openLightbox(0)}>
+
+                            <img src={property.images[0]} alt="property image" className={s.galleryImage} />
 
                         </div>
-                        {property.images.slice(1,5).map((img,idx)=>(
-                            <div key={idx} 
-                                 className={s.gallerySideItem} 
-                                 onClick={()=>openLightbox(idx+1)}
+                        {property.images.slice(1, 5).map((img, idx) => (
+                            <div key={idx}
+                                className={s.gallerySideItem}
+                                onClick={() => openLightbox(idx + 1)} // bcoz indexing start at 0 but the actual property image index starts at 1 , as the main image is already mentioned above
                             >
-                                <img src={img} alt="image" className={s.galleryImage}/>
-                                {idx==3 && property.images.length>5 && (
+                                <img src={img} alt="image" className={s.galleryImage} />
+
+                                {/* only show the overlay if there are more than 5 total images */}
+                                {idx == 3 && property.images.length > 5 && (
                                     <div className={s.galleryMoreOverlay}>
                                         +{property.images.length - 5}
                                     </div>
                                 )}
+
                             </div>
                         ))}
                     </div>
                     <div className={s.mobileSliderContainer}>
                         <div className={s.mobileSliderTrack}>
-                            {property.images.map((img,idx)=>(
-                                <div key={idx} 
-                                     className={s.mobileSlide}
-                                     onClick={()=>openLightbox(idx)}
+                            {property.images.map((img, idx) => (
+                                <div key={idx}
+                                    className={s.mobileSlide}
+                                    onClick={() => openLightbox(idx)}
                                 >
-                                    <img src={img} alt="images" className={s.mobileSlideImage}/>
+                                    <img src={img} alt="images" className={s.mobileSlideImage} />
                                     <div className={s.mobileSlideCounter}>
-                                        {idx+1}/{property.images.length}
+                                        {idx + 1}/{property.images.length}
                                     </div>
                                 </div>
                             ))}
@@ -223,27 +219,27 @@ const PropertyDetails = () => {
                     </div>
                 </div>
                 {/* lightbox model */}
-                {lightboxIndex!==null && (
+                {lightboxIndex !== null && (
                     <div className={s.lightboxOverlay} onClick={closeLightbox}>
                         <button onClick={closeLightbox} className={s.lightboxCloseBtn}>
-                            <HiX size={24} className={s.lightboxCloseIcon}/>
+                            <HiX size={24} className={s.lightboxCloseIcon} />
                         </button>
-                        <div onClick={(e)=>e.stopPropagation()} className={s.lightboxContent}>
+                        <div onClick={(e) => e.stopPropagation()} className={s.lightboxContent}>
                             <img src={property.images[lightboxIndex]} alt="images"
-                                 className={s.lightboxImage}
+                                className={s.lightboxImage}
                             />
-                            {property.images.length>1 && (
+                            {property.images.length > 1 && (
                                 <>
                                     <button onClick={prevImage} className={s.lightboxPrevBtn}>
-                                        <HiChevronLeft size={30}/>
+                                        <HiChevronLeft size={30} />
                                     </button>
                                     <button onClick={nextImage} className={s.lightboxNextBtn}>
-                                        <HiChevronRight size={30}/>
+                                        <HiChevronRight size={30} />
                                     </button>
                                 </>
                             )}
                             <div className={s.lightboxCounter}>
-                                {lightboxIndex+1}/{property.images.length}
+                                {lightboxIndex + 1}/{property.images.length}
                             </div>
                         </div>
                     </div>
@@ -260,21 +256,21 @@ const PropertyDetails = () => {
                                     {property.title}
                                 </h1>
                                 <p className={s.propertyLocation}>
-                                    <HiLocationMarker className={s.locationIcon}/>
+                                    <HiLocationMarker className={s.locationIcon} />
                                     <span className={s.locationText}>
-                                        {property.area},{property.city},India 
+                                        {property.area},{property.city},India
                                     </span>
                                 </p>
                             </div>
                             <div className={s.actionButtons}>
-                                {(!user || user.role==='buyer') && (
-                                    <button onClick={handleWishlistToggle} 
-                                            className={s.wishlistButton(isInWishlist)}
+                                {(!user || user.role === 'buyer') && (
+                                    <button onClick={handleWishlistToggle}
+                                        className={s.wishlistButton(isInWishlist)}
                                     >
                                         {isInWishlist ? (
-                                            <HiHeart size={26} fill="ef4444"/>
-                                        ):(
-                                            <HiOutlineHeart size={26}/>
+                                            <HiHeart size={26} fill="ef4444" />
+                                        ) : (
+                                            <HiOutlineHeart size={26} />
                                         )}
                                     </button>
                                 )}
@@ -284,35 +280,35 @@ const PropertyDetails = () => {
                         <div className={s.statsGrid}>
                             {[
                                 {
-                                label: "Bedrooms",
-                                value: property.bhk || 0,
-                                icon: HiOutlineHome,
+                                    label: "Bedrooms",
+                                    value: property.bhk || 0,
+                                    icon: HiOutlineHome,
                                 },
                                 {
-                                label: "Bathrooms",
-                                value:
-                                    property.bathrooms ||
-                                    Math.max(1, (parseInt(property.bhk) || 1) - 1),
-                                icon: HiOutlineUserGroup,
+                                    label: "Bathrooms",
+                                    value:
+                                        property.bathrooms ||
+                                        Math.max(1, (parseInt(property.bhk) || 1) - 1),
+                                    icon: HiOutlineUserGroup,
                                 },
                                 {
-                                label: "Furnishing",
-                                value: property.furnishing || "N/A",
-                                icon: HiCollection,
+                                    label: "Furnishing",
+                                    value: property.furnishing || "N/A",
+                                    icon: HiCollection,
                                 },
                                 {
-                                label: "Living Area",
-                                value: `${property.areaSize} sqft`,
-                                icon: HiOutlineViewGrid,
+                                    label: "Living Area",
+                                    value: `${property.areaSize} sqft`,
+                                    icon: HiOutlineViewGrid,
                                 },
                                 {
-                                label: "Type",
-                                value: property.propertyType,
-                                icon: HiCalendar,
+                                    label: "Type",
+                                    value: property.propertyType,
+                                    icon: HiCalendar,
                                 },
                             ].map((stat, i) => (
                                 <div key={i} className={s.statCard}>
-                                    {stat.icon && <stat.icon size={18} className={s.statIcon}/>}
+                                    {stat.icon && <stat.icon size={18} className={s.statIcon} />}
                                     <div className={s.statValue}>{stat.value}</div>
                                     <div className={s.statLabel}>{stat.label}</div>
                                 </div>
@@ -329,29 +325,29 @@ const PropertyDetails = () => {
                             <div className={s.amenitiesGrid}>
                                 {(property.amenities?.length ? property.amenities : ["Parking", "Security", "Water Supply", "Power Backup"]).map((amn, i) => (
                                     <div key={i} className={s.amenityItem}>
-                                        <HiBadgeCheck size={18} className={s.amenityIcon}/>
+                                        <HiBadgeCheck size={18} className={s.amenityIcon} />
                                         <span className={s.amenityText}>{amn}</span>
-                                    </div>        
+                                    </div>
                                 ))}
                             </div>
                         </div>
                     </div>
                     <div className={s.sidebarColumn}>
-                        <div className={s.priceCard} 
-                             style={{background:"var(--primary)"}}
+                        <div className={s.priceCard}
+                            style={{ background: "var(--primary)" }}
                         >
                             <div className={s.priceCardLabel}>
-                                {property.status?.toLowerCase()==='rent' ? "Rental details" : "Listing price"}
+                                {property.status?.toLowerCase() === 'rent' ? "Rental details" : "Listing price"}
                             </div>
                             <div className={s.priceCardValue}>
                                 {property.status?.toLowerCase() === "rent"
                                     ? `₹${Number(property.price).toLocaleString("en-IN")}`
                                     : formattedPrice}
-                                    {property.status?.toLowerCase() === "rent" && (
+                                {property.status?.toLowerCase() === "rent" && (
                                     <span className={s.priceCardPeriod}> /month</span>
-                                    )}
+                                )}
                             </div>
-                            {property.status.toLowerCase()==='rent' && (
+                            {property.status.toLowerCase() === 'rent' && (
                                 <div className={s.rentDetails}>
                                     <div className={s.rentDetailRow}>
                                         <span className={s.rentDetailLabel}>Security Deposit:</span>
@@ -375,7 +371,7 @@ const PropertyDetails = () => {
                             )}
                             <div className={s.priceCardAvailability}>
                                 Available for{" "}
-                                {property.status?.toLowerCase()==='rent' ? "rent":"sale"}
+                                {property.status?.toLowerCase() === 'rent' ? "rent" : "sale"}
                             </div>
                         </div>
                         {/* seller & contact */}
@@ -384,76 +380,76 @@ const PropertyDetails = () => {
                                 <div className={s.sellerAvatar}>
                                     <img
                                         src={
-                                        property.seller?.profilePic ||
-                                        `https://ui-avatars.com/api/?name=${property.seller?.name || "Seller"}&background=0d6e59&color=fff`
+                                            property.seller?.profilePic ||
+                                            `https://ui-avatars.com/api/?name=${property.seller?.name || "Seller"}&background=0d6e59&color=fff`
                                         }
                                         alt="Agent"
                                         className={s.sellerAvatarImage}
                                     />
                                 </div>
                                 <div className={s.sellerDetails}>
-                                <div className={s.sellerNameLink}>
-                                    <h4 className={s.sellerName}>
-                                       {property.seller?.name || "Seller"}
-                                    </h4>
-                                </div>
-                                <div className={s.sellerVerifiedBadge}>
-                                    <HiBadgeCheck className={s.verifiedIcon} /> Verified Seller
+                                    <div className={s.sellerNameLink}>
+                                        <h4 className={s.sellerName}>
+                                            {property.seller?.name || "Seller"}
+                                        </h4>
+                                    </div>
+                                    <div className={s.sellerVerifiedBadge}>
+                                        <HiBadgeCheck className={s.verifiedIcon} /> Verified Seller
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div className={s.chatButtonWrapper}>
-                            <button className={s.chatButton} onClick={handleChatStart}>
-                            <HiChatAlt /> Chat
-                            </button>
-                        </div>
-                        {/* Inquiry Form */}
-                        <h4 className={s.inquiryFormTitle}>Inquire</h4>
-                        <form onSubmit={handleInquirySubmit}>
-                            {user?.role === "buyer" ? (
-                            <>
-                                <textarea
-                                    placeholder="Your Message..."
-                                    value={inquiry.message}
-                                    onChange={(e) =>
-                                        setInquiry({ ...inquiry, message: e.target.value })
-                                    }
-                                    className={s.inquiryTextarea}
-                                    required
-                                />
-                                <button
-                                    type="submit"
-                                    className={s.inquirySubmitButton}
-                                    disabled={inquiryStatus.loading}
-                                >
-                                {inquiryStatus.loading ? "Sending..." : "Send Inquiry"}
+                            <div className={s.chatButtonWrapper}>
+                                <button className={s.chatButton} onClick={handleChatStart}>
+                                    <HiChatAlt /> Chat
                                 </button>
-                                {inquiryStatus.success && (
-                                    <p className={s.inquirySuccessMessage}>Inquiry sent!</p>
-                                )}
-                            </>
-                            ) : (
-                            <div className={s.inquiryDisabledMessage}>
-                                <p className={s.inquiryDisabledText}>
-                                {user
-                                    ? "Only buyers can send inquiries."
-                                    : "Please login as a buyer to send inquiries."}
-                                </p>
-                                    {!user && (
-                                    <Link to="/login" className={s.inquiryLoginButton}>
-                                        Login
-                                    </Link>
-                                    )}
                             </div>
-                            )}
-                        </form>
-                    </div>                
+                            {/* Inquiry Form */}
+                            <h4 className={s.inquiryFormTitle}>Inquire</h4>
+                            <form onSubmit={handleInquirySubmit}>
+                                {user?.role === "buyer" ? (
+                                    <>
+                                        <textarea
+                                            placeholder="Your Message..."
+                                            value={inquiry.message}
+                                            onChange={(e) =>
+                                                setInquiry({ ...inquiry, message: e.target.value })
+                                            }
+                                            className={s.inquiryTextarea}
+                                            required
+                                        />
+                                        <button
+                                            type="submit"
+                                            className={s.inquirySubmitButton}
+                                            disabled={inquiryStatus.loading}
+                                        >
+                                            {inquiryStatus.loading ? "Sending..." : "Send Inquiry"}
+                                        </button>
+                                        {inquiryStatus.success && (
+                                            <p className={s.inquirySuccessMessage}>Inquiry sent!</p>
+                                        )}
+                                    </>
+                                ) : (
+                                    <div className={s.inquiryDisabledMessage}>
+                                        <p className={s.inquiryDisabledText}>
+                                            {user
+                                                ? "Only buyers can send inquiries."
+                                                : "Please login as a buyer to send inquiries."}
+                                        </p>
+                                        {!user && (
+                                            <Link to="/login" className={s.inquiryLoginButton}>
+                                                Login
+                                            </Link>
+                                        )}
+                                    </div>
+                                )}
+                            </form>
+                        </div>
                     </div>
                 </div>
                 <div className={s.additionalDetails}>
                     <h3 className={s.detailsTitle}>Property Details</h3>
                     <div className={s.detailsGrid}>
-                         {[
+                        {[
                             {
                                 label: "Property ID",
                                 value: property._id.slice(-8).toUpperCase(),
@@ -464,12 +460,12 @@ const PropertyDetails = () => {
                             },
                             { label: "Property Type", value: property.propertyType },
                             { label: "Status", value: `For ${property.status}` },
-                            ].map((detail, i) => (
-                                <div key={i} className={s.detailRow}>
-                                    <span className={s.detailValue}>{detail.label}</span>
-                                    <span className={s.detailValue}>{detail.value}</span>
-                                </div>
-                            ))}
+                        ].map((detail, i) => (
+                            <div key={i} className={s.detailRow}>
+                                <span className={s.detailValue}>{detail.label}</span>
+                                <span className={s.detailValue}>{detail.value}</span>
+                            </div>
+                        ))}
                     </div>
                 </div>
                 <section className={s.similarSection}>
@@ -481,15 +477,15 @@ const PropertyDetails = () => {
                             </p>
                         </div>
                         <Link to="/properties" className={s.similarAllLink}>
-                            All Listings <HiChevronRight/>
+                            All Listings <HiChevronRight />
                         </Link>
                     </div>
                     <div className={s.similarGrid}>
-                        {similarProperties.length>0 ? (
-                            similarProperties.slice(0,3).map((p)=>(
-                                <PropertyCard key={p._id} property={p}/>
+                        {similarProperties.length > 0 ? (
+                            similarProperties.slice(0, 3).map((p) => (
+                                <PropertyCard key={p._id} property={p} />
                             ))
-                        ):(
+                        ) : (
                             <div className={s.similarEmptyState}>
                                 No similar properties found in this location.
                             </div>
@@ -498,7 +494,7 @@ const PropertyDetails = () => {
                 </section>
             </main>
         </div>
-  )
+    )
 }
 
 export default PropertyDetails

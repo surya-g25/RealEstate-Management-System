@@ -2,7 +2,9 @@ import React, { useState } from 'react'
 import { profileStyles as s } from '../../assets/dummyStyles'
 import { useAuth } from '../../context/AuthContext'
 import Navbar from '../../components/common/Navbar';
-import { HiCheck, HiOutlineLocationMarker, HiOutlineMail, HiOutlinePhone, HiOutlineUser } from 'react-icons/hi';
+import { HiCheck, HiOutlineLocationMarker, HiOutlineMail, HiOutlinePhone, HiOutlineUser, HiX } from 'react-icons/hi';
+import axios from 'axios';
+import API_URL from '../../config';
 
 const Profile = () => {
   const { user, setUser, token } = useAuth();
@@ -18,24 +20,21 @@ const Profile = () => {
     address: user?.address || "",
   });
 
-  const handleInputChange=(e)=>{
-    const {name,value}=e.target;
-    if(name==='phone')
-    {
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    if (name === 'phone') {
       //only 10 digits
-      const numericValue=value.replace(/\D/g,"").slice(0,10);
-      setFormData({...formData,[name]:numericValue});
+      const numericValue = value.replace(/\D/g, "").slice(0, 10);
+      setFormData({ ...formData, [name]: numericValue });
     }
-    else
-    {
-      setFormData({...formData,[name]:value});
+    else {
+      setFormData({ ...formData, [name]: value });
     }
   }
 
-  const handleImageChange=(e)=>{
-    const file=e.target.files[0];
-    if(file)
-    {
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
       setImageFile(file);
       setImagePreview(URL.createObjectURL(file));
       setRemoveProfilePic(false);
@@ -43,50 +42,47 @@ const Profile = () => {
   }
 
   // to update your profile
-  const handleUpdate=async(e)=>{
-    e.preventDefault();
+  const handleUpdate = async (e) => {
+    e.preventDefault(); // prevent the page from refreshing
     setLoading(true);
     setError(null);
     try {
-      const data=new FormData();
-      data.append("name",formData.name);
-      data.append("phone",formData.phone);
-      data.append("address",formData.address);
-      if(imageFile)
-      {
-        data.append("profilePic",imageFile);
+      const data = new FormData();
+      data.append("name", formData.name);
+      data.append("phone", formData.phone);
+      data.append("address", formData.address);
+      if (imageFile) {
+        data.append("profilePic", imageFile);
       }
-      if(removeProfilePic)
-      {
-        data.append("removeProfilePic",true);
+      if (removeProfilePic) {
+        data.append("removeProfilePic", true);
       }
-      const res=await axios.put(`${API_URL}/api/user/profile`,data,{
-        headers:{
-          Authorization:`Bearer ${token}`,
-          "Content-Type":"multipart/form-data",
+      const res = await axios.put(`${API_URL}/api/user/profile`, data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
         }
       });
-      if(res.data.success)
-      {
-        const updatedUser=res.data.user;
+      if (res.data.success) {
+        const updatedUser = res.data.user;
         setUser(updatedUser);
-        localStorage.setItem("user",JSON.stringify(updatedUser));
+        localStorage.setItem("user", JSON.stringify(updatedUser));
         setIsEditing(false);
         setImageFile(null);
         setImagePreview(null);
       }
-    } 
-    catch (err) {
-        setError(err.response?.data?.message || "Failed to update profile");
     }
-    finally{
+    catch (err) {
+      setError(err.response?.data?.message || "Failed to update profile");
+    }
+    finally {
       setLoading(false);
     }
   }
 
   return (
-     <div className={s.containerWrapper(user?.role)}>
-      {user?.role!=="seller" && <Navbar/>}
+    <div className={s.containerWrapper(user?.role)}>
+      {user?.role !== "seller" && <Navbar />}
       <div className={s.mainContainer(user?.role)}>
         <header className={s.header}>
           <h1 className={s.pageTitle}>Personal Profile</h1>
@@ -98,11 +94,11 @@ const Profile = () => {
           <div className={s.profileHeader}>
             <div className={s.avatarSection}>
               <div className={s.avatarWrapper}>
-                {imagePreview?(
-                  <img src={imagePreview} alt="preview" className={s.avatarImage}/>
-                ):!removeProfilePic && user?.profilePic ?(
-                  <img src={user.profilePic} alt="pic" className={s.avatarImage}/>
-                ):(
+                {imagePreview ? (
+                  <img src={imagePreview} alt="preview" className={s.avatarImage} />
+                ) : !removeProfilePic && user?.profilePic ? (
+                  <img src={user.profilePic} alt="pic" className={s.avatarImage} />
+                ) : (
                   <span className={s.avatarPlaceholder}>
                     {user?.name?.[0]?.toUpperCase() || "U"}
                   </span>
@@ -110,18 +106,20 @@ const Profile = () => {
               </div>
               {isEditing && (
                 <>
+                  {/* image upload button  */}
                   <label className={s.uploadButton}>
-                    <input type="file" onChange={handleImageChange} className='hidden' 
-                    accept='image/*'/>
-                    <HiOutlineUser size={20}/>
+                    <input type="file" onChange={handleImageChange} className='hidden'
+                      accept='image/*' />
+                    <HiOutlineUser size={20} />
                   </label>
+                  {/* if there is a new image preview, or there is an existing profile picture that hasn't already been marked for removal */}
                   {(imagePreview || (!removeProfilePic && user?.profilePic)) && (
-                    <button type="button" onClick={()=>{
+                    <button type="button" onClick={() => {
                       setImagePreview(null)
                       setImageFile(null)
                       setRemoveProfilePic(true)
                     }} className={s.removeButton} title='Remove Profile Picture'>
-                        <HiX size={20}/> 
+                      <HiX size={20} />
                     </button>
                   )}
                 </>
@@ -137,74 +135,72 @@ const Profile = () => {
             <form onSubmit={handleUpdate} className={s.editForm}>
               <div>
                 <label className={s.label}>Full Name</label>
-                <input type="text" name="name" value={formData.name} onChange={handleInputChange} className={s.input} required/>
+                <input type="text" name="name" value={formData.name} onChange={handleInputChange} className={s.input} required />
               </div>
               <div>
                 <label className={s.label}>Phone Number</label>
-                <input type='tel' name="phone" value={formData.phone} onChange={handleInputChange} maxLength="10" pattern='\d*' className={s.input} placeholder='Enter your 10 digit phone number' 
-
-                />
+                <input type='tel' name="phone" value={formData.phone} onChange={handleInputChange} maxLength="10" pattern='\d*' className={s.input} placeholder='Enter your 10 digit phone number' />
               </div>
               <div>
                 <label className={s.label}>Address</label>
-                <textarea name="address" value={formData.address} className={s.textarea} placeholder="Enter your full address" onChange={handleInputChange}/>
+                <textarea name="address" value={formData.address} className={s.textarea} placeholder="Enter your full address" onChange={handleInputChange} />
               </div>
               <div className={s.formActions}>
                 <button type="submit" disabled={loading} className={s.saveButton}>
-                  <HiCheck size={20}/>{loading?"Saving...":"Save changes"}
+                  <HiCheck size={20} />{loading ? "Saving..." : "Save changes"}
                 </button>
-                <button type="button" onClick={()=>{
+                <button type="button" onClick={() => {
                   setIsEditing(false);
                   setImageFile(null);
                   setImagePreview(null);
                   setRemoveProfilePic(false);
                 }} className={s.cancelButton}>
-                  <HiX size={20}/> Cancel
+                  <HiX size={20} /> Cancel
                 </button>
-              </div>  
+              </div>
             </form>
-          ):(
+          ) : (
             <div className={s.infoSection}>
               <div className={s.infoItem}>
                 <div className={s.infoIcon}>
-                  <HiOutlineMail size={24}/>
+                  <HiOutlineMail size={24} />
                 </div>
                 <div>
-                    <div className={s.infoLabel}>Email Address</div>
-                    <div className={s.infoValue}>{user?.email}</div>
+                  <div className={s.infoLabel}>Email Address</div>
+                  <div className={s.infoValue}>{user?.email}</div>
                 </div>
               </div>
 
               <div className={s.infoItem}>
                 <div className={s.infoIcon}>
-                  <HiOutlinePhone size={24}/>
+                  <HiOutlinePhone size={24} />
                 </div>
                 <div>
-                    <div className={s.infoLabel}>Phone Number</div>
-                    <div className={s.infoValue}>{user?.phone || "Not provided"}</div>
+                  <div className={s.infoLabel}>Phone Number</div>
+                  <div className={s.infoValue}>{user?.phone || "Not provided"}</div>
                 </div>
               </div>
 
               <div className={s.infoItem}>
                 <div className={s.infoIcon}>
-                  <HiOutlineLocationMarker size={24}/>
+                  <HiOutlineLocationMarker size={24} />
                 </div>
                 <div>
-                    <div className={s.infoLabel}>Location / Address</div>
-                    <div className={s.infoValue}>{user?.address || "Not provided"}</div>
+                  <div className={s.infoLabel}>Location / Address</div>
+                  <div className={s.infoValue}>{user?.address || "Not provided"}</div>
                 </div>
               </div>
 
               <div className={s.editButtonWrapper}>
-                <button onClick={()=>setIsEditing(true)} className={s.editProfileButton}>
-                    Edit Profile Details
-                </button> 
+                <button onClick={() => setIsEditing(true)} className={s.editProfileButton}>
+                  Edit Profile Details
+                </button>
               </div>
             </div>
           )}
         </div>
       </div>
-     </div>
+    </div>
   )
 }
 
