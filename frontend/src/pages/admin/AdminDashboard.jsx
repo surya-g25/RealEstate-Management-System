@@ -6,39 +6,37 @@ import { useAuth } from '../../context/AuthContext'
 import { HiOutlineCheckCircle, HiOutlineLibrary, HiOutlineTicket, HiOutlineUserGroup } from 'react-icons/hi';
 
 const AdminDashboard = () => {
-    const [stats,setStats]=useState({
-        totalUsers:0,
-        totalProperties:0,
-        activeListings:0,
-        soldProperties:0,
+    const [stats, setStats] = useState({
+        totalUsers: 0,
+        totalProperties: 0,
+        activeListings: 0,
+        soldProperties: 0,
     });
-    const [loading,setLoading]=useState(true);
-    const {token}=useAuth();
+    const [loading, setLoading] = useState(true);
+    const { token } = useAuth();
 
-    // to detch dashboard data
-    useEffect(()=>{
+    // to fetch dashboard data
+    useEffect(() => {
         console.log("Admin dashboard mounted");
-        const fetchDashboardData=async()=>{
+        const fetchDashboardData = async () => {
             try {
-                const res=await axios.get(`${API_URL}/api/admin/stats`,{
-                    headers:{Authorization:`Bearer ${token}`}
+                const res = await axios.get(`${API_URL}/api/admin/stats`, {
+                    headers: { Authorization: `Bearer ${token}` }
                 });
-                if(res.data.success)
-                {
+                if (res.data.success) {
                     setStats(res.data.stats);
                 }
                 setLoading(false);
-            } 
+            }
             catch (err) {
-                console.error("Failed to load admin dashboard stats:",err);
-                setLoading(false);                
+                console.error("Failed to load admin dashboard stats:", err);
+                setLoading(false);
             }
         };
         fetchDashboardData();
-    },[]);
+    }, []);
 
-    if(loading)
-    {
+    if (loading) {
         return (
             <div className={s.loaderFullPage}>
                 <div className={s.loader}></div>
@@ -48,32 +46,32 @@ const AdminDashboard = () => {
 
     const statCards = [
         {
-        title: "Total Users",
-        value: stats.totalUsers || 0,
-        icon: HiOutlineUserGroup,
-        color: "#0d9488",
-        bg: "#ccfbf1",
+            title: "Total Users",
+            value: stats.totalUsers || 0,
+            icon: HiOutlineUserGroup,
+            color: "#0d9488",
+            bg: "#ccfbf1",
         },
         {
-        title: "Total Properties",
-        value: stats.totalProperties || 0,
-        icon: HiOutlineLibrary,
-        color: "#f59e0b",
-        bg: "#fef3c7",
+            title: "Total Properties",
+            value: stats.totalProperties || 0,
+            icon: HiOutlineLibrary,
+            color: "#f59e0b",
+            bg: "#fef3c7",
         },
         {
-        title: "Active Listings",
-        value: stats.activeListings || 0,
-        icon: HiOutlineTicket,
-        color: "#3b82f6",
-        bg: "#dbeafe",
+            title: "Active Listings",
+            value: stats.activeListings || 0,
+            icon: HiOutlineTicket,
+            color: "#3b82f6",
+            bg: "#dbeafe",
         },
         {
-        title: "Sold Properties",
-        value: stats.soldProperties || 0,
-        icon: HiOutlineCheckCircle,
-        color: "#10b981",
-        bg: "#dcfce7",
+            title: "Sold Properties",
+            value: stats.soldProperties || 0,
+            icon: HiOutlineCheckCircle,
+            color: "#10b981",
+            bg: "#dcfce7",
         },
     ];
 
@@ -84,19 +82,19 @@ const AdminDashboard = () => {
                     <h1 className={s.pageTitle}>Admin Overview</h1>
                     <p className={s.pageSubtitle}>Welcome back, Administrator. Here's today's summary.</p>
                 </div>
-                <button onClick={()=>{
+                <button onClick={() => {
                     setLoading(true);
-                    window.location.reload();
-                    }} className={s.refreshButton}
+                    window.location.reload(); // to reload the current page 
+                }} className={s.refreshButton}
                 >
                     Refresh Data
                 </button>
             </div>
             <div className={s.statsGrid}>
-                {statCards.map((card,i)=>(
+                {statCards.map((card, i) => (
                     <div key={i} className={s.statCard}>
-                        <div className={s.statIconContainer} style={{background:card.bg , color:card.color}}>
-                            <card.icon size={22}/>
+                        <div className={s.statIconContainer} style={{ background: card.bg, color: card.color }}>
+                            <card.icon size={22} />
                         </div>
                         <div>
                             <div className={s.statTitle}>{card.title}</div>
@@ -105,7 +103,7 @@ const AdminDashboard = () => {
                     </div>
                 ))}
             </div>
-            <div  className={s.secondGrid}>
+            <div className={s.secondGrid}>
                 <div className={s.systemHealthCard}>
                     <h3 className={s.systemHealthTitle}>System Health</h3>
                     <div className={s.servicesContainer}>
@@ -125,12 +123,12 @@ const AdminDashboard = () => {
                 <div className={s.adminToolsCard}>
                     <h3 className={s.adminToolsTitle}>Admin Tools</h3>
                     <p className={s.adminToolsDesc}>
-                        Qickly manage platform resources and tasks.
+                        Quickly manage platform resources and tasks.
                     </p>
                     <div className={s.adminToolsButtonsContainer}>
                         <button className={s.adminToolButton}>System Logs</button>
                         <button className={s.adminToolButton}>DB Backups</button>
-                        <button className={s.adminToolButton}>Settings</button> 
+                        <button className={s.adminToolButton}>Settings</button>
                     </div>
                 </div>
             </div>
