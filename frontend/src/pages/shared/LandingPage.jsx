@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { landingPageStyles as s } from "../../assets/dummyStyles"
 import Navbar from '../../components/common/Navbar'
 import { HiCurrencyDollar, HiHome, HiLightningBolt, HiLocationMarker, HiMail, HiOfficeBuilding, HiPhone, HiSearch, HiShieldCheck, HiVideoCamera } from 'react-icons/hi'
 import { useNavigate } from 'react-router-dom'
@@ -170,39 +169,39 @@ const LandingPage = () => {
 
 
   return (
-    <div className={s.bgMain}>
+    <div className="bg-bg-main">
       <Navbar />
       {/* Hero section */}
-      <section className={s.heroSection}>
-        <div className={s.heroContent}>
-          <span className={s.badge}>Trusted by 20,000+ home-owners</span>
-          <h1 className={s.heroTitle}>
-            Find Your <span className={s.textGradient}>Perfect</span> Next Chapter.
+      <section className="fade-in items-center justify-center  hero-section pt-32 pb-16 xl:px-40 md:px-20 flex items-center gap-16 overflow-hidden md:flex-col lg:flex-col xl:flex-row max-lg:flex-col max-lg:text-center max-lg:pt-28 max-lg:pb-8 max-lg:px-4 max-lg:gap-8">
+        <div className="hero-content flex-1 max-lg:flex max-lg:flex-col max-lg:items-center">
+          <span className="badge bg-primary-light text-primary-dark mb-6 inline-block">Trusted by 20,000+ home-owners</span>
+          <h1 className="hero-title text-[clamp(2rem,5vw,4.5rem)] mb-6 transition-all duration-300 max-lg:text-[clamp(1.75rem,8vw,2.5rem)] max-lg:leading-tight max-lg:text-center">
+            Find Your <span className="text-gradient">Perfect</span> Next Chapter.
           </h1>
-          <p className={s.heroSubtitle}>
+          <p className="hero-subtitle text-[1.125rem] text-text-muted mb-12 max-w-[540px] max-lg:text-base max-lg:mb-10 max-lg:mx-auto max-lg:text-center max-lg:px-4">
             Experience the most advanced real estate platform. Discover verified listings, connect with top agents and find a place you'll love.
           </p>
-          <form onSubmit={handleSearch} className={s.searchForm}>
-            <div className={s.searchField}>
-              <div className={s.textPrimary}>
+          <form onSubmit={handleSearch} className="glass search-form p-5 rounded-[2rem] flex items-center gap-4 shadow-[0_20px_40px_rgba(0,0,0,0.08)] max-w-[900px] border border-white/50 relative z-10 max-lg:flex-col max-lg:w-full max-lg:max-w-[500px] max-lg:mx-auto max-lg:gap-2 max-lg:rounded-[1.5rem]">
+            <div className="search-field flex-[1.2] flex items-center gap-3 py-2 px-3 transition-all duration-300 min-w-[220px] max-lg:w-full max-lg:py-4 max-lg:px-2 max-lg:border-b max-lg:border-[#f1f5f9]">
+              <div className="text-primary">
                 <HiLocationMarker size={26} />
               </div>
-              <div className={s.flexCol}>
-                <label className={s.labelSmall}>Location</label>
-                <input type='text' placeholder='Where are you looking?' value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className={s.inputTransparent} />
+              <div className="flex flex-col flex-1">
+                <label className="text-[0.7rem] font-extrabold text-text-muted uppercase tracking-[0.05em] mb-1">Location</label>
+                <input type='text' placeholder='Where are you looking?' value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="border-none bg-transparent outline-none w-full text-base font-semibold text-text-main" />
               </div>
             </div>
-            <div className={s.searchDivider}></div>
-            <div className={s.searchField}>
-              <div className={s.textPrimary}>
+            <div className="search-divider w-[1px] h-[44px] bg-border-color opacity-60 shrink-0 max-lg:hidden"></div>
+            <div className="search-field flex-[1.2] flex items-center gap-3 py-2 px-3 transition-all duration-300 min-w-[220px] max-lg:w-full max-lg:py-4 max-lg:px-2 max-lg:border-b max-lg:border-[#f1f5f9]">
+              <div className="text-primary">
                 <HiHome size={26} />
               </div>
-              <div className={s.flexCol}>
-                <label className={s.labelSmall}>Property type</label>
+              <div className="flex flex-col flex-1">
+                <label className="text-[0.7rem] font-extrabold text-text-muted uppercase tracking-[0.05em] mb-1">Property type</label>
                 <select
                   value={propertyType}
                   onChange={(e) => setPropertyType(e.target.value)}
-                  className={`${s.inputTransparent} cursor-pointer`}>
+                  className="border-none bg-transparent outline-none w-full text-base font-semibold text-text-main cursor-pointer">
                   <option value="Select Type">Select Type</option>
                   <option value="flat">Flat/Apartment</option>
                   <option value="villa">Villa/House</option>
@@ -211,125 +210,125 @@ const LandingPage = () => {
                 </select>
               </div>
             </div>
-            <button type="submit" className={s.searchButton}>
+            <button type="submit" className="btn btn-primary search-button h-[64px] min-w-[140px] rounded-[1.25rem] text-base font-bold shadow-[0_12px_24px_rgba(13,148,136,0.25)] flex items-center justify-center gap-2 max-lg:w-full max-lg:h-[56px] max-lg:rounded-2xl max-lg:mt-2">
               <HiSearch size={22} /> Search
             </button>
           </form>
           {/* stats */}
-          <div className={s.statsContainer}>
-            <div className={s.statItemFlex}>
-              <h3 className={s.statNumber}>12k+</h3>
-              <p className={s.statLabel}>Ready Properties</p>
+          <div className="stats-container flex gap-[clamp(1rem,3vw,4rem)] mt-16 max-lg:justify-center max-lg:gap-8 max-md:flex-wrap">
+            <div className="flex-1 max-md:flex-none max-md:shrink-0 max-md:basis-[120px]">
+              <h3 className="text-[clamp(1.5rem,3vw,2rem)] font-extrabold">12k+</h3>
+              <p className="uppercase text-[0.7rem] text-text-muted font-extrabold tracking-[0.05em]">Ready Properties</p>
             </div>
-            <div className={s.statItemBorder}>
-              <h3 className={s.statNumber}>500+</h3>
-              <p className={s.statLabel}>Agent Network</p>
+            <div className="stat-item border-l border-border-color pl-[clamp(1rem,3vw,4rem)] flex-1 max-lg:pl-8 max-md:border-none max-md:pl-0 max-md:flex-none max-md:shrink-0 max-md:basis-[120px]">
+              <h3 className="text-[clamp(1.5rem,3vw,2rem)] font-extrabold">500+</h3>
+              <p className="uppercase text-[0.7rem] text-text-muted font-extrabold tracking-[0.05em]">Agent Network</p>
             </div>
-            <div className={s.statItemBorder}>
-              <h3 className={s.statNumber}>4.9/5</h3>
-              <p className={s.statLabel}>User Rating</p>
+            <div className="stat-item border-l border-border-color pl-[clamp(1rem,3vw,4rem)] flex-1 max-lg:pl-8 max-md:border-none max-md:pl-0 max-md:flex-none max-md:shrink-0 max-md:basis-[120px]">
+              <h3 className="text-[clamp(1.5rem,3vw,2rem)] font-extrabold">4.9/5</h3>
+              <p className="uppercase text-[0.7rem] text-text-muted font-extrabold tracking-[0.05em]">User Rating</p>
             </div>
           </div>
         </div>
         {/* hero image */}
-        <div className={s.heroImageContainer}>
-          <div className={s.imageWrapper}>
-            <img src={banner} alt="banner" className={s.heroImage} />
-            <div className={s.verifiedBadge}>
-              <div className={s.badgeIconWrapper}>
+        <div className="hero-image-container flex-1 relative ">
+          <div className="rounded-[3rem] overflow-hidden shadow-[0_40px_80px_-20px_rgba(0,0,0,0.25)] relative">
+            <img src={banner} alt="banner" className="w-full h-[600px] object-cover" />
+            <div className="glass absolute bottom-8 left-8 p-6 rounded-3xl flex items-center gap-4 max-w-[300px]">
+              <div className="bg-primary-light p-3 rounded-2xl">
                 <HiShieldCheck size={24} className='text-primary' />
               </div>
               <div>
-                <h4 className={s.badgeTitle}>Verified Listing </h4>
-                <p className={s.badgeText}>Inspected by our profesional team</p>
+                <h4 className="text-[0.9375rem] m-0 font-bold">Verified Listing </h4>
+                <p className="text-[0.75rem] text-text-muted m-0">Inspected by our profesional team</p>
               </div>
-              <span className={s.preApproved}>Pre-Approved</span>
+              <span className="badge bg-primary/10 text-primary text-[0.625rem]">Pre-Approved</span>
             </div>
           </div>
         </div>
       </section>
       {/* category section */}
-      <section className={s.categorySection}>
-        <div className={s.container}>
-          <div className={s.categoryHeader}>
-            <div className={s.categoryHeaderText}>
-              <h2 className={s.categoryTitle}>Browse By Category</h2>
-              <p className={s.categoryDesc}>
+      <section className="py-24 bg-bg-alt">
+        <div className="container ">
+          <div className="category-header flex justify-between items-end mb-12 max-sm:flex-col max-sm:items-start max-sm:gap-6">
+            <div className="max-w-[500px]">
+              <h2 className="text-[2.5rem] font-extrabold mb-4 max-sm:text-[2rem]">Browse By Category</h2>
+              <p className="text-text-muted">
                 Explore curated collection of properties tailored to your specific lifestyle and needs.
               </p>
             </div>
           </div>
-          <div className={s.categoryGrid}>
+          <div className="category-grid grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-6 max-sm:grid-cols-2 max-sm:gap-4">
             {categories.map((cat, idx) => (
               <div
                 key={idx}
-                className={s.categoryCard}
+                className="category-card py-10 px-6 text-center cursor-pointer bg-white rounded-3xl border border-[#e2e8f0] transition-all duration-300 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)] hover:-translate-y-2 hover:border-primary hover:shadow-[0_12px_25px_-5px_rgba(13,148,136,0.1)] group max-sm:py-6 max-sm:px-4"
                 onClick={() => navigate(`/properties?type=${cat.type}`)}
               >
 
-                <div className={s.categoryIconWrapper}>
+                <div className="category-icon-wrapper w-16 h-16 bg-primary-light text-primary rounded-[1.25rem] flex items-center justify-center mx-auto mb-6 transition-all duration-300 group-hover:bg-primary group-hover:text-white group-hover:scale-110 max-sm:w-12 max-sm:h-12 max-sm:mb-4 max-sm:rounded-2xl">
                   {cat.icon}
                 </div>
-                <h3 className={s.categoryName}>{cat.name}</h3>
-                <p className={s.categoryCount}>{cat.count.toLocaleString()} Properties</p>
+                <h3 className="mb-2 text-xl font-bold max-sm:text-base">{cat.name}</h3>
+                <p className="text-text-muted text-[0.875rem]">{cat.count.toLocaleString()} Properties</p>
               </div>
             ))}
           </div>
         </div>
       </section>
       {/* features sections */}
-      <section className={s.featuredSection}>
-        <div className={s.featuresContainer}>
-          <div className={s.featuresList}>
+      <section className="py-24 bg-bg-alt">
+        <div className="container features-container flex gap-24 items-center max-lg:flex-col max-lg:gap-12">
+          <div className="features-list-container flex-1 grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-8 max-md:grid-cols-1 max-md:gap-8">
             {features.map((f, idx) => (
-              <div key={idx} className={s.featureCard} style={{ animationDelay: `${idx * 0.1}s` }}>
-                <div className={s.featureIconWrapper}>{f.icon}</div>
-                <h3 className={s.featureTitle}>{f.title}</h3>
-                <p className={s.featureDesc}>{f.desc}</p>
+              <div key={idx} className="fade-in feature-card-item p-8 bg-white rounded-3xl border border-[#e2e8f0] transition-all duration-300 flex flex-col items-start hover:border-primary hover:-translate-y-[5px] hover:shadow-[0_10px_25px_-5px_rgba(0,0,0,0.05)]" style={{ animationDelay: `${idx * 0.1}s` }}>
+                <div className="w-14 h-14 bg-primary-light text-primary rounded-2xl flex items-center justify-center mb-6">{f.icon}</div>
+                <h3 className="text-[1.125rem] mb-3 font-extrabold">{f.title}</h3>
+                <p className="text-text-muted text-[0.875rem] leading-relaxed">{f.desc}</p>
               </div>
             ))}
           </div>
-          <div className={s.featuresContent}>
-            <h2 className={s.featuresHeading}>
-              Why RealEstate <br /> is the <span className={s.textGradient}>Preferred Choice</span>
+          <div className="flex-1">
+            <h2 className="text-[clamp(2rem,4vw,3.5rem)] font-extrabold mb-8">
+              Why RealEstate <br /> is the <span className="text-gradient">Preferred Choice</span>
             </h2>
-            <p className={s.featuresSubtext}>
+            <p className="text-text-muted text-[1.125rem] mb-12 leading-[1.8]">
               We've reinvented the property search experience from the ground
               up. By focusing on transparency, technological precision, and
               user-centric design, we help you find not just a house, but a
               home.
             </p>
-            <ul className={s.featuresListItems}>
+            <ul className="flex flex-col gap-6">
               {[
                 "Direct connection with certified agents",
                 "Real-time market valuation data",
                 "Secure document management system",
                 "24/7 Premium customer support",
               ].map((item, idx) => (
-                <li key={idx} className={s.listItem}>
+                <li key={idx} className="flex items-center gap-4 font-medium">
                   <HiLightningBolt className="text-primary" />{item}
                 </li>
               ))}
             </ul>
-            <a href="#process" className={s.learnMoreLink}>
+            <a href="#process" className="inline-block mt-12 text-primary font-semibold border-b-2 hover:text-primary-dark">
               Learn more about our process &rarr;
             </a>
           </div>
         </div>
       </section>
       {/* how it works section */}
-      <section id="process" className={s.processSection}>
-        <div className={s.container}>
-          <div className={s.processHeader}>
-            <span className={s.processBadge}>How It Works?</span>
-            <h2 className={s.processTitle}>
-              Our Seamless <span className={s.textGradient}>Process</span>
+      <section id="process" className="py-32 bg-bg-main">
+        <div className="container ">
+          <div className="text-center mb-20">
+            <span className="badge bg-primary/10 text-primary mb-4 inline-block">How It Works?</span>
+            <h2 className="text-5xl mb-6 max-sm:text-4xl text-text-main font-extrabold">
+              Our Seamless <span className="text-gradient">Process</span>
             </h2>
-            <p className={s.processSubtitle}>
+            <p className="text-text-muted max-w-[600px] mx-auto text-lg">
               We've simplified the journey of finding your dream home into three clear, stress free steps.
             </p>
           </div>
-          <div className={s.processGrid}>
+          <div className="process-grid grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-12 relative max-md:gap-14">
             {[
               {
                 step: "01",
@@ -350,11 +349,11 @@ const LandingPage = () => {
                 icon: <HiShieldCheck size={32} />,
               },
             ].map((p, idx) => (
-              <div className={s.processCard} key={idx}>
-                <div className={s.stepNumber}>{p.step}</div>
-                <div className={s.processIconWrapper}>{p.icon}</div>
-                <h3 className={s.processCardTitle}>{p.title}</h3>
-                <p className={s.processCardDesc}>{p.desc}</p>
+              <div className="process-card py-12 px-8 bg-white/40 backdrop-blur-md rounded-[2rem] border border-white/50 relative transition-all duration-300 text-center hover:-translate-y-2 hover:bg-white hover:shadow-[0_20px_40px_rgba(0,0,0,0.06)] hover:border-primary-light" key={idx}>
+                <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-16 h-16 bg-primary text-white rounded-[1.5rem] flex items-center justify-center text-2xl font-extrabold shadow-[0_8px_20px_rgba(13,148,136,0.3)]">{p.step}</div>
+                <div className="w-20 h-20 bg-primary-light text-primary rounded-[2rem] flex items-center justify-center mx-auto mt-4 mb-8">{p.icon}</div>
+                <h3 className="text-[1.5rem] mb-4 font-bold">{p.title}</h3>
+                <p className="text-text-muted leading-[1.7]">{p.desc}</p>
               </div>
             ))}
           </div>
@@ -362,24 +361,24 @@ const LandingPage = () => {
       </section>
 
       {/* featured properties collection */}
-      <section className={s.featuredSection}>
-        <div className={s.container}>
-          <div className={s.featuredHeader}>
-            <span className={s.featuredBadge}>HandPicked For You</span>
-            <h2 className={s.featuredTitle}>Featured Collections</h2>
-            <p className={s.featuredSubtitle}>Discover high value properties curated by our experts for their exceptional design, location and investment potential.</p>
+      <section className="py-24 bg-bg-alt">
+        <div className="container ">
+          <div className="text-center mb-16">
+            <span className="badge bg-primary-light text-primary mb-4 inline-block">HandPicked For You</span>
+            <h2 className="text-5xl mb-6 max-sm:text-4xl font-extrabold text-text-main">Featured Collections</h2>
+            <p className="text-text-muted max-w-[600px] mx-auto text-lg pt-1 pb-1">Discover high value properties curated by our experts for their exceptional design, location and investment potential.</p>
           </div>
 
           {loading ? (
-            <div className={s.loadingContainer}>
-              <div className={s.loader}></div>
+            <div className="flex justify-center items-center py-20 min-h-[400px]">
+              <div className="loader w-10 h-10 border-4 border-solid border-secondary border-t-primary rounded-full animate-spin mx-auto"></div>
             </div>
           ) : error ? (
-            <div className={s.errorContainer}>
+            <div className="text-center py-20 text-red-500 min-h-[300px]">
               <p>{error}</p>
             </div>
           ) : (
-            <div className={s.propertiesGrid}>
+            <div className="grid gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
               {properties
                 .filter((p) => p) // removes falsy values from array
                 .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) //sorts the properties by createdAt
@@ -395,27 +394,27 @@ const LandingPage = () => {
             </div>
           )}
 
-          <div className={s.discoverButtonContainer}>
-            <button className={s.discoverButton} onClick={() => navigate("/properties")}>
+          <div className="text-center mt-20">
+            <button className="btn btn-primary py-4 px-12 rounded-3xl" onClick={() => navigate("/properties")}>
               Discover More Properties
             </button>
           </div>
         </div>
       </section>
       {/* footer section */}
-      <footer className={s.footer}>
-        <div className={s.container}>
-          <div className={s.footerMainGrid}>
-            <div className={s.footerBrand}>
-              <div className={s.brandLogo}>
-                <div className={s.brandIcon}>RE</div>
+      <footer className="bg-white border-t border-[#e2e8f0] pt-24 pb-0">
+        <div className="container ">
+          <div className="footer-main-grid grid grid-cols-[1.5fr_1fr_1fr_1.5fr] gap-16 mb-16 max-lg:grid-cols-2 max-lg:gap-12 max-sm:grid-cols-1 min-[640px]:max-[1024px]:justify-items-center">
+            <div className="footer-brand-section max-sm:text-center max-sm:flex max-sm:flex-col max-sm:items-center">
+              <div className="flex items-center gap-2 text-2xl font-extrabold text-primary mb-6">
+                <div className="bg-primary text-white py-1.5 px-2.5 rounded-xl text-base">RE</div>
                 RealEstate
               </div>
-              <p className={s.brandDesc}>The most trusted platform for buyting selling and renting premium state globally. We make property hunting seamless.</p>
-              <div className={s.socialIcons}>
+              <p className="text-text-muted mb-8 leading-relaxed text-[0.9375rem]">The most trusted platform for buyting selling and renting premium state globally. We make property hunting seamless.</p>
+              <div className="flex gap-4">
                 {[FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn].map(
                   (Icon, idx) => (
-                    <a href="#" key={idx} className={s.socialIcon}>
+                    <a href="#" key={idx} className="social-icon w-9 h-9 rounded-full bg-bg-alt flex items-center justify-center text-text-main transition-all duration-300 hover:-translate-y-1 hover:bg-primary hover:text-white">
                       <Icon size={16} />
                     </a>
                   ),
@@ -424,25 +423,25 @@ const LandingPage = () => {
             </div>
             {/* Column 2: Quick Links */}
             <div>
-              <h4 className={s.footerHeading}>Company</h4>
-              <ul className={s.footerLinks}>
+              <h4 className="text-[1.125rem] font-extrabold mb-8">Company</h4>
+              <ul className="flex flex-col gap-5 text-text-muted text-[0.9375rem]">
                 <li>
-                  <a href="/" className={s.footerLink}>
+                  <a href="/" className="footer-link transition-colors duration-300 hover:text-primary hover:underline">
                     Home
                   </a>
                 </li>
                 <li>
-                  <a href="/properties" className={s.footerLink}>
+                  <a href="/properties" className="footer-link transition-colors duration-300 hover:text-primary hover:underline">
                     Property
                   </a>
                 </li>
                 <li>
-                  <a href="/wishlist" className={s.footerLink}>
+                  <a href="/wishlist" className="footer-link transition-colors duration-300 hover:text-primary hover:underline">
                     Wishlist
                   </a>
                 </li>
                 <li>
-                  <a href="/contact" className={s.footerLink}>
+                  <a href="/contact" className="footer-link transition-colors duration-300 hover:text-primary hover:underline">
                     Contact
                   </a>
                 </li>
@@ -451,18 +450,18 @@ const LandingPage = () => {
 
             {/* Column 3: Contact Info */}
             <div>
-              <h4 className={s.footerHeading}>Support</h4>
-              <ul className={s.footerLinks}>
-                <li className={s.contactInfo}>
+              <h4 className="text-[1.125rem] font-extrabold mb-8">Support</h4>
+              <ul className="flex flex-col gap-5 text-text-muted text-[0.9375rem]">
+                <li className="flex items-center gap-3">
                   <HiMail className="text-primary text-xl" />{" "}
                   contact@reestate.com
                 </li>
-                <li className={s.contactInfo}>
+                <li className="flex items-center gap-3">
                   <HiPhone className="text-primary text-xl" /> +91 1234567890
                 </li>
-                <li className={s.contactInfoStart}>
+                <li className="flex items-start gap-3">
                   <HiLocationMarker
-                    className={`text-primary ${s.contactIcon}`}
+                    className="text-primary shrink-0 mt-[2px] text-xl"
                   />
                   123 Business Hub, India
                 </li>
@@ -470,26 +469,26 @@ const LandingPage = () => {
             </div>
             {/* column 4 */}
             <div>
-              <h4 className={s.footerHeading}>Newsletter</h4>
-              <p className={s.newsletterDesc}>
+              <h4 className="text-[1.125rem] font-extrabold mb-8">Newsletter</h4>
+              <p className="text-text-muted text-[0.875rem] mb-6 leading-relaxed">
                 Subscribe to get the latest listings and market insights directly in your inbox
               </p>
-              <div className={s.newsletterInputWrapper}>
-                <input type='email' placeholder='Enter your email' className={s.newsletterInput} />
-                <button className={s.newsletterButton}>Join Now</button>
+              <div className="relative">
+                <input type='email' placeholder='Enter your email' className="w-full py-4 pr-[85px] pl-5 rounded-2xl border border-[#e2e8f0] bg-bg-alt outline-none text-[0.875rem] focus:border-primary transition-colors" />
+                <button className="btn btn-primary absolute right-1.5 top-1.5 bottom-1.5 px-5 rounded-xl text-[0.8125rem]">Join Now</button>
               </div>
             </div>
           </div>
           {/* bottom bar */}
-          <div className={s.bottomBar}>
-            <div className={s.bottomBarFlex}>
+          <div className="border-t border-[#e2e8f0] py-8 flex flex-col gap-4 text-[0.875rem] text-text-muted">
+            <div className="flex justify-between items-center flex-wrap gap-4 max-sm:flex-col-reverse max-sm:justify-center">
               <p>
                 &copy; 2026 RealEstate. All Rights Reserved
               </p>
-              <div className={s.footerLegalLinks}>
-                <a href="#" className={s.footerLink}>Privacy Policy</a>
-                <a href="#" className={s.footerLink}>Terms of Service</a>
-                <a href="#" className={s.footerLink}>Cookies settings</a>
+              <div className="flex gap-8 max-sm:w-full max-sm:justify-center max-sm:flex-wrap max-sm:gap-4">
+                <a href="#" className="footer-link transition-colors duration-300 hover:text-primary hover:underline">Privacy Policy</a>
+                <a href="#" className="footer-link transition-colors duration-300 hover:text-primary hover:underline">Terms of Service</a>
+                <a href="#" className="footer-link transition-colors duration-300 hover:text-primary hover:underline">Cookies settings</a>
               </div>
             </div>
           </div>

@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { resetPasswordStyles as s } from '../../assets/dummyStyles'
 import Navbar from '../../components/common/Navbar'
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
@@ -49,20 +48,20 @@ const ResetPassword = () => {
   }
 
   return (
-    <div className={s.container}>
+    <div className="bg-bg-alt min-h-screen pt-32 max-lg:pt-28">
       <Navbar />
-      <div className={s.centerWrapper}>
-        <div className={s.formCard}>
-          <h2 className={s.title}>Reset Password</h2>
-          <p className={s.subtitle}>Create a new password for your account</p>
-          {error && (<div className={s.errorMessage}>{error}</div>)}
-          {success && (<div className={s.successMessage}>{success}</div>)}
-          <form onSubmit={handleSubmit} className={s.form}>
+      <div className="container flex justify-center items-center pt-16 sm:pt-8">
+        <div className="glass fade-in w-full max-w-[450px] p-10 sm:p-6 rounded-3xl sm:rounded-2xl shadow-card">
+          <h2 className="text-[2rem] sm:text-2xl font-bold text-center mb-2 text-primary">Reset Password</h2>
+          <p className="text-center text-text-muted mb-8">Create a new password for your account</p>
+          {error && (<div className="p-3 bg-red-100 text-red-600 rounded-lg mb-4 text-sm text-center">{error}</div>)}
+          {success && (<div className="p-3 bg-green-100 text-green-600 rounded-lg mb-4 text-sm text-center">{success}</div>)}
+          <form onSubmit={handleSubmit} className="flex flex-col gap-5">
             <div>
-              <label className={s.label}>New Password</label>
+              <label className="block mb-2 font-medium">New Password</label>
               <div style={{ position: "relative" }}>
                 <input type={showPassword ? "text" : "password"} value={password}
-                  onChange={(e) => setPassword(e.target.value)} placeholder='......' required className={s.inpur} style={{ paddingRight: "40px" }} />
+                  onChange={(e) => setPassword(e.target.value)} placeholder='......' required className="w-full py-3 px-4 rounded-lg border border-border outline-none focus:border-primary transition-colors" style={{ paddingRight: "40px" }} />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
@@ -86,10 +85,10 @@ const ResetPassword = () => {
             </div>
 
             <div>
-              <label className={s.label}>Confirm New Password</label>
+              <label className="block mb-2 font-medium">Confirm New Password</label>
               <div style={{ position: "relative" }}>
                 <input type={showConfirmPassword ? "text" : "password"} value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)} placeholder='......' required className={s.inpur} style={{ paddingRight: "40px" }} />
+                  onChange={(e) => setConfirmPassword(e.target.value)} placeholder='......' required className="w-full py-3 px-4 rounded-lg border border-border outline-none focus:border-primary transition-colors" style={{ paddingRight: "40px" }} />
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
@@ -111,13 +110,13 @@ const ResetPassword = () => {
                 </button>
               </div>
             </div>
-            <button className={s.submitButton} type='submit' disabled={isLoading}>
+            <button className="btn btn-primary p-3.5 text-base mt-2" type='submit' disabled={isLoading}>
               {isLoading ? "Resetting..." : "Rest Password"}
             </button>
           </form>
-          <p className={s.footerText}>
+          <p className="text-center mt-8 text-text-muted">
             Back to {" "}
-            <Link to='/login' className={s.link}>
+            <Link to='/login' className="text-primary font-semibold hover:underline">
               Login
             </Link>
           </p>

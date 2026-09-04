@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { adminContactsStyles as s } from '../../assets/dummyStyles'
 import { useAuth } from '../../context/AuthContext'
 import { HiOutlineClock, HiOutlineMail, HiOutlinePhone } from 'react-icons/hi';
 import axios from 'axios'
@@ -43,47 +42,47 @@ const AdminContacts = () => {
 
   return (
     <>
-    <div className={s.container}>
-        <h1 className={s.heading}>Contact requests</h1>
-        <p className={s.subheading}>
+    <div className="mb-10">
+        <h1 className="text-[2rem] font-extrabold text-text-main mb-2">Contact requests</h1>
+        <p className="text-text-muted text-[0.9rem]">
             Read and manage inquiries from platform users.
         </p>
     </div>
-    <div className={s.card}>
-        <div className={s.cardHeader}>
-            <h2 className={s.cardTitle}>Inbox ({contacts.length})</h2> 
+    <div className="card-premium p-0 overflow-hidden">
+        <div className="border-b border-[#f1f5f9] p-6 flex justify-between items-center">
+            <h2 className="text-[1.2rem] font-extrabold">Inbox ({contacts.length})</h2> 
         </div>
         {contacts.length===0 ? (
-            <div className={s.emptyState}>
-                <HiOutlineMail size={48} className={s.emptyIcon}/>
+            <div className="p-16 text-center text-text-muted">
+                <HiOutlineMail size={48} className="opacity-20 mb-4 mx-auto"/>
                 <p> No contact messages yet. Inbox is clear.</p>
             </div>
         ):(
-            <div className={s.contactList}>
+            <div className="flex flex-col">
                 {contacts.map((contact,index)=>(
-                    <div key={contact._id} className={s.contactItem(index,contacts.length)}>
-                        <div className={s.contactHeader}>
+                    <div key={contact._id} className={`p-5 sm:p-8 bg-white transition-all duration-300 ease-in-out border-b ${index !== contacts.length - 1 ? 'border-[#f1f5f9]' : 'border-transparent'}`}>
+                        <div className="flex flex-col sm:flex-row justify-between items-start mb-6 gap-4 sm:gap-0">
                             <div className='flex gap-5'>
-                                    <div className={s.avatarWrapper(contact.role)}>
+                                    <div className={`w-14 h-14 rounded-full flex items-center justify-center font-bold text-[1.25rem] shrink-0 ${contact.role === 'seller' ? 'bg-[#dcfce7] text-[#166534]' : 'bg-[#dbeafe] text-[#1e40af]'}`}>
                                     {contact.name?.charAt(0)?.toUpperCase()}
                                 </div>
                                 <div>
-                                    <div className={s.nameBadgeContainer}>
-                                        <h3 className={s.name}>{contact.name}</h3>
-                                        <span className={s.roleBadge(contact.role)}>
+                                    <div className="flex items-center gap-3 mb-1 flex-wrap">
+                                        <h3 className="text-[1.1rem] font-extrabold text-text-main">{contact.name}</h3>
+                                        <span className={`text-[0.7rem] px-[0.6rem] py-[0.2rem] rounded-full font-bold uppercase ${contact.role === 'seller' ? 'bg-[#dcfce7] text-[#166534]' : 'bg-[#dbeafe] text-[#1e40af]'}`}>
                                             {contact.role}
                                         </span>
                                     </div>
-                                    <div className={s.contactDetails}>
-                                        <div className={s.detailItem}>
+                                    <div className="flex flex-col sm:flex-row gap-2 sm:gap-6 sm:flex-wrap mt-2 sm:mt-0">
+                                        <div className="flex items-center gap-[0.4rem] text-[0.85rem] text-text-muted break-all sm:break-normal">
                                             <HiOutlineMail size={16}/>{contact.email}
                                         </div>
                                         {contact.phone && (
-                                            <div className={s.detailItem}>
+                                            <div className="flex items-center gap-[0.4rem] text-[0.85rem] text-text-muted break-all sm:break-normal">
                                                 <HiOutlinePhone size={16}/>{contact.phone} 
                                             </div>
                                         )}
-                                        <div className={s.detailItem}>
+                                        <div className="flex items-center gap-[0.4rem] text-[0.85rem] text-text-muted break-all sm:break-normal">
                                             <HiOutlineClock size={16}/>{" "}
                                             {new Date(contact.createdAt).toLocaleString([],{
                                                 dateStyle:"medium",
@@ -94,7 +93,7 @@ const AdminContacts = () => {
                                 </div>
                             </div>
                         </div>
-                        <div className={s.messageBox}>{contact.message}</div>
+                        <div className="bg-[#f8fafc] p-4 sm:py-5 sm:px-6 rounded-2xl text-[0.95rem] leading-[1.6] text-[#334155] border border-[#f1f5f9]">{contact.message}</div>
                     </div>
                 ))}
             </div>

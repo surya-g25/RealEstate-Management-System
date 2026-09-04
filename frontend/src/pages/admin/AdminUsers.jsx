@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react'
-import { adminUsersStyles as s } from '../../assets/dummyStyles'
 import { useAuth } from '../../context/AuthContext'
 import axios from 'axios'
 import API_URL from '../../config'
@@ -95,24 +94,24 @@ const AdminUsers = () => {
 
     return (
         <>
-            <div className={s.containerHeader}>
+            <div className="flex justify-between items-start mb-8 flex-wrap gap-4">
                 <div>
-                    <h1 className={s.headerTitle}>User Management</h1>
-                    <p className={s.headerSubtitle}>
+                    <h1 className="text-[1.75rem] font-extrabold text-text-main mb-1">User Management</h1>
+                    <p className="text-text-muted text-[0.875rem]">
                         Monitor platform users and access levels.
                     </p>
                 </div>
-                <div className={s.filterWrapper} ref={filterRef}>
-                    <button onClick={() => setOpenFilter(!openFilter)} className={s.filterButton}>
+                <div className="relative" ref={filterRef}>
+                    <button onClick={() => setOpenFilter(!openFilter)} className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-[#e2e8f0] bg-white text-text-main shadow-sm hover:bg-[#f8fafc] transition-all duration-200 cursor-pointer">
                         <HiOutlineFilter size={18} /> Filter
                     </button>
                     {openFilter && (
-                        <div className={s.filterDropdown}>
+                        <div className="absolute right-0 max-sm:left-0 max-sm:right-auto mt-2 w-44 rounded-xl border border-[#e2e8f0] bg-white shadow-lg z-20 overflow-hidden">
                             <button onClick={() => {
                                 setRoleFilter("all");
                                 setOpenFilter(false);
                             }}
-                                className={s.filterOption(roleFilter === "all")}
+                                className={`w-full text-left px-4 py-2.5 hover:bg-[#f8fafc] ${roleFilter === "all" ? "font-semibold text-primary" : "text-text-main"}`}
                             >
                                 All Users
                             </button>
@@ -121,7 +120,7 @@ const AdminUsers = () => {
                                 setRoleFilter("buyer");
                                 setOpenFilter(false);
                             }}
-                                className={s.filterOption(roleFilter === "buyer")}
+                                className={`w-full text-left px-4 py-2.5 hover:bg-[#f8fafc] ${roleFilter === "buyer" ? "font-semibold text-primary" : "text-text-main"}`}
                             >
                                 Buyer
                             </button>
@@ -130,7 +129,7 @@ const AdminUsers = () => {
                                 setRoleFilter("seller");
                                 setOpenFilter(false);
                             }}
-                                className={s.filterOption(roleFilter === "seller")}
+                                className={`w-full text-left px-4 py-2.5 hover:bg-[#f8fafc] ${roleFilter === "seller" ? "font-semibold text-primary" : "text-text-main"}`}
                             >
                                 Seller
                             </button>
@@ -139,7 +138,7 @@ const AdminUsers = () => {
                                 setRoleFilter("admin");
                                 setOpenFilter(false);
                             }}
-                                className={s.filterOption(roleFilter === "admin")}
+                                className={`w-full text-left px-4 py-2.5 hover:bg-[#f8fafc] ${roleFilter === "admin" ? "font-semibold text-primary" : "text-text-main"}`}
                             >
                                 Admin
                             </button>
@@ -147,75 +146,78 @@ const AdminUsers = () => {
                     )}
                 </div>
             </div>
-            <div className={s.cardContainer}>
-                <div className={s.cardHeader}>
-                    <div className={s.cardTitleRow}>
-                        <h2 className={s.cardTitle}>Platform Users</h2>
-                        <div className={s.userCount}>
+            <div className="card-premium overflow-hidden mb-8 p-0">
+                <div className="pt-6 px-6 pb-2">
+                    <div className="flex justify-between items-center mb-4">
+                        <h2 className="text-[1.25rem] font-extrabold text-text-main">Platform Users</h2>
+                        <div className="text-sm font-semibold text-text-muted">
                             Showing {" "}
-                            <span className={s.userCountSpan}>{filteredUsers.length}</span>{" "} users
+                            <span className="text-text-main">{filteredUsers.length}</span>{" "} users
                         </div>
                     </div>
                 </div>
-                <div className={s.table}>
-                    <thead className={s.thead}>
-                        <tr className={s.tableRow}>
-                            <th className={s.thUserInfo}>User Info</th>
-                            <th className={s.thRole}>Role</th>
-                            <th className={s.thContact}>Contact Details</th>
-                            <th className={s.thStatus}>Account Status</th>
-                            <th className={s.thActions}>Actions</th>
+                <div className="w-full border-collapse min-w-[800px]">
+                    <thead className="bg-[#f8fafc] text-[#64748b] text-[0.7rem] font-bold uppercase tracking-[0.05em]">
+                        <tr className="border-b border-[#f1f5f9]">
+                            <th className="py-4 px-6 text-left">User Info</th>
+                            <th className="py-4 px-6 text-center">Role</th>
+                            <th className="py-4 px-6 text-left">Contact Details</th>
+                            <th className="py-4 px-6 text-center">Account Status</th>
+                            <th className="py-4 px-6 text-right">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {filteredUsers.length > 0 ?
                             filteredUsers.map((user) => (
-                                <tr key={user._id} className={s.tableRow}>
-                                    <td className={s.tdUserInfo}>
+                                <tr key={user._id} className="border-b border-[#f1f5f9]">
+                                    <td className="py-6 px-8">
                                         <div className='flex items-center gap-4'>
-                                            <div className={s.userAvatar}>
+                                            <div className="w-10 h-10 rounded-full bg-primary-light text-primary flex items-center justify-center font-bold">
                                                 {user.name.charAt(0).toUpperCase()}
                                             </div>
                                             <div>
-                                                <div className={s.userInfoName}>{user.name}</div>
-                                                <div className={s.userInfoId}>
+                                                <div className="font-bold text-[0.9375rem]">{user.name}</div>
+                                                <div className="text-[0.75rem] text-text-muted">
                                                     ID:{user._id.slice(-8).toUpperCase()}
                                                 </div>
                                             </div>
                                         </div>
                                     </td>
-                                    <td className={s.tdRole}>
-                                        <span className={s.roleBadge(user.role)}>
+                                    <td className="py-6 px-6 text-center">
+                                        <span className={`px-3 py-1.5 rounded-full text-[0.75rem] font-bold uppercase ${user.role === "admin" ? "bg-[#fef3c7] text-[#92400e]" :
+                                            user.role === "seller" ? "bg-[#dcfce7] text-[#166534]" :
+                                                "bg-[#dbeafe] text-[#1e40af]"
+                                            }`}>
                                             {user.role}
                                         </span>
                                     </td>
-                                    <td className={s.tdContact}>
-                                        <div className={s.contactWrapper}>
-                                            <div className={s.contactEmail}>
+                                    <td className="py-6 px-6">
+                                        <div className="flex flex-col gap-1">
+                                            <div className="text-[0.875rem] flex items-center gap-2 text-text-main">
                                                 <HiOutlineMail color='#94a2b8' />{user.email}
                                             </div>
                                             {user.phone && (
-                                                <div className={s.contactPhone}>
+                                                <div className="text-[0.875rem] flex items-center gap-2 text-text-main">
                                                     <HiOutlineIdentification color='#94a3b8' />{" "}
                                                     {user.phone}
                                                 </div>
                                             )}
                                         </div>
                                     </td>
-                                    <td className={s.tdStatus}>
+                                    <td className="py-6 px-6 text-center">
                                         {user.isBlocked ? (
-                                            <span className={s.statusBadgeBlocked}>
+                                            <span className="text-[#dc2626] text-[0.8125rem] font-bold inline-flex items-center gap-1.5 justify-center bg-[#fff5f5] py-1 px-2 rounded-lg border border-[#fee2e2]">
                                                 <HiOutlineLockClosed size={14} /> Suspended
                                             </span>
                                         ) : (
-                                            <span className={s.statusBadgeActive}>
+                                            <span className="text-[#10b981] text-[0.8125rem] font-bold inline-flex items-center gap-1.5 justify-center bg-[#f0fdf4] py-1 px-2 rounded-lg border border-[#dcfce7]">
                                                 <HiOutlineLockOpen size={14} /> Active
                                             </span>
                                         )}
                                     </td>
-                                    <td className={s.tdActions}>
-                                        <div className={s.actionsWrapper}>
-                                            <button onClick={() => handleBlock(user._id)} className={s.blockButton(user.isBlocked)} title={user.isBlocked ? "Unblock user" : "Block user"}>
+                                    <td className="py-6 px-6 text-right">
+                                        <div className="flex gap-2 justify-end">
+                                            <button onClick={() => handleBlock(user._id)} className={`w-9 h-9 rounded-lg border border-[#e2e8f0] bg-white flex items-center justify-center cursor-pointer hover:bg-gray-50 ${user.isBlocked ? "text-[#10b981]" : "text-[#f59e0b]"}`} title={user.isBlocked ? "Unblock user" : "Block user"}>
 
                                                 {user.isBlocked ? (
                                                     <HiOutlineLockOpen size={18} />
@@ -223,7 +225,7 @@ const AdminUsers = () => {
                                                     <HiOutlineLockClosed size={18} />
                                                 )}
                                             </button>
-                                            <button onClick={() => handleDelete(user._id)} className={s.deleteButton} title='Delete User'>
+                                            <button onClick={() => handleDelete(user._id)} className="w-9 h-9 rounded-lg border-none bg-[#fef2f2] text-[#dc2626] flex items-center justify-center cursor-pointer hover:bg-red-100" title='Delete User'>
                                                 <HiOutlineTrash size={18} />
                                             </button>
                                         </div>
@@ -232,7 +234,7 @@ const AdminUsers = () => {
                             )
                             ) : (
                                 <tr>
-                                    <td className={s.emptyState} colSpan="5">
+                                    <td className="py-16 text-center text-text-muted" colSpan="5">
                                         No user found for this filter
                                     </td>
                                 </tr>

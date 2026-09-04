@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { verifyEmailStyles as s } from '../../assets/dummyStyles'
 import Navbar from '../../components/common/Navbar'
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -46,29 +45,29 @@ const VerifyEmail = () => {
         }
     }
   return (
-    <div className={s.pageContainer}>
+    <div className="bg-bg-alt min-h-screen pt-32 max-lg:pt-28">
         <Navbar/>
-        <div className={s.containerCenter}>
-            <div className={s.card}>
-                <h2 className={s.title}>Verify your email</h2>
-                <p className={s.subtitle}>
+        <div className="container flex justify-center items-center pt-16 sm:pt-8">
+            <div className="glass fade-in w-full max-w-[450px] p-10 sm:p-6 rounded-3xl sm:rounded-2xl shadow-card">
+                <h2 className="text-[2rem] sm:text-2xl font-bold text-center mb-2 text-primary">Verify your email</h2>
+                <p className="text-center text-text-muted mb-8">
                     Enter the 6-digit code sent to your email
                 </p>
-                {error && (<div className={s.errorAlert}>{error}</div>)}
-                {success && (<div className={s.successAlert}>{success}</div>)}
-                <form onSubmit={handleSubmit} className={s.form}>
+                {error && (<div className="p-3 bg-red-100 text-red-600 rounded-lg mb-4 text-sm text-center">{error}</div>)}
+                {success && (<div className="p-3 bg-green-100 text-green-600 rounded-lg mb-4 text-sm text-center">{success}</div>)}
+                <form onSubmit={handleSubmit} className="flex flex-col gap-5">
                     {!emailFromState && (
                         <div>
-                            <label className={s.label}>Email Address</label>
-                            <input type="email" value={email} onChange={(e)=>setEmail(e.target.value)} placeholder='name@company.com' required className={s.input}/>
+                            <label className="block mb-2 font-medium">Email Address</label>
+                            <input type="email" value={email} onChange={(e)=>setEmail(e.target.value)} placeholder='name@company.com' required className="w-full py-3 px-4 rounded-lg border border-border outline-none focus:border-primary transition-colors"/>
 
                         </div>
                     )}
                     <div>
-                        <label className={s.label}>Verification code</label>
-                        <input type='text' maxLength="6" placeholder='123123' value={code} onChange={(e)=>setCode(e.target.value)} required className={s.codeInput}/>
+                        <label className="block mb-2 font-medium">Verification code</label>
+                        <input type='text' maxLength="6" placeholder='123123' value={code} onChange={(e)=>setCode(e.target.value)} required className="w-full py-3 px-4 rounded-lg border border-border outline-none focus:border-primary transition-colors text-center text-2xl tracking-[0.5em]"/>
                     </div>
-                    <button type='submit' disabled={isLoading} className={s.submitButton}>
+                    <button type='submit' disabled={isLoading} className="btn btn-primary p-3.5 text-base mt-2">
                         {isLoading?"Verifying...":"Verify Email"}
                     </button>
                 </form>

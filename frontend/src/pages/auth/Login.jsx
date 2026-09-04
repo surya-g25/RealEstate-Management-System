@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { loginStyles as s } from "../../assets/dummyStyles"
 import { useAuth } from "../../context/AuthContext"
 import Navbar from "../../components/common/Navbar"
 import { Link, useNavigate } from 'react-router-dom'
@@ -47,28 +46,28 @@ const Login = () => {
         setIsLoading(false);
     }
     return (
-        <div className={s.pageContainer}>
+        <div className="bg-bg-alt min-h-screen pt-32 max-lg:pt-28">
             <Navbar />
-            <div className={s.containerCenter}>
-                <div className={s.card}>
-                    <h2 className={s.title}>Welcome Back</h2>
-                    <p className={s.subtitle}>Please enter your details to sign in</p>
-                    {error && (<div className={s.errorAlert}>{error}</div>)}
-                    <form onSubmit={handleSubmit} className={s.form}>
+            <div className="container flex justify-center items-center pt-16 sm:pt-8">
+                <div className="glass fade-in w-full max-w-[450px] p-10 sm:p-6 rounded-3xl sm:rounded-2xl shadow-card">
+                    <h2 className="text-[2rem] sm:text-2xl font-bold text-center mb-2 text-primary">Welcome Back</h2>
+                    <p className="text-center text-text-muted mb-8">Please enter your details to sign in</p>
+                    {error && (<div className="p-3 bg-red-100 text-red-600 rounded-lg mb-4 text-sm text-center">{error}</div>)}
+                    <form onSubmit={handleSubmit} className="flex flex-col gap-5">
                         <div>
-                            <label className={s.label}>Email Address</label>
-                            <input type='email' name="email" placeholder='name@company.com' value={formData.email} onChange={handleChange} className={s.input} />
+                            <label className="block mb-2 font-medium">Email Address</label>
+                            <input type='email' name="email" placeholder='name@company.com' value={formData.email} onChange={handleChange} className="w-full py-3 px-4 rounded-lg border border-border outline-none focus:border-primary transition-colors" />
 
                         </div>
                         <div>
-                            <div className={s.passwordHeader}>
-                                <label className={s.label}>Password</label>
-                                <Link to="/forgot-password" className={s.forgotLink}>
+                            <div className="flex justify-between items-center mb-2">
+                                <label className="block mb-2 font-medium">Password</label>
+                                <Link to="/forgot-password" className="text-sm text-primary font-medium hover:underline">
                                     Forgot Password?
                                 </Link>
                             </div>
                             <div style={{ position: "relative" }}>
-                                <input type={showPassword ? "text" : "password"} name="password" value={formData.password} placeholder='....' onChange={handleChange} required className={s.input} style={{ paddingRight: "40px" }} />
+                                <input type={showPassword ? "text" : "password"} name="password" value={formData.password} placeholder='....' onChange={handleChange} required className="w-full py-3 px-4 rounded-lg border border-border outline-none focus:border-primary transition-colors" style={{ paddingRight: "40px" }} />
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}
@@ -90,13 +89,13 @@ const Login = () => {
                                 </button>
                             </div>
                         </div>
-                        <button className={s.submitButton} type='submit' disabled={isLoading}>
+                        <button className="btn btn-primary p-3.5 text-base mt-2" type='submit' disabled={isLoading}>
                             {isLoading ? "Signing In..." : "Sign In"}
                         </button>
                     </form>
-                    <p className={s.footerText}>
+                    <p className="text-center mt-8 text-text-muted">
                         Don't have an account{" "}
-                        <Link to="/register" className={s.registerLink}>
+                        <Link to="/register" className="text-primary font-semibold hover:underline">
                             Create an account
                         </Link>
                     </p>

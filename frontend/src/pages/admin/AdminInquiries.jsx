@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { adminInquiriesStyles as s } from "../../assets/dummyStyles"
 import { useAuth } from "../../context/AuthContext"
 import axios from 'axios'
 import API_URL from "../../config"
@@ -54,61 +53,61 @@ const AdminInquiries = () => {
     }
     return (
         <>
-            <div className={s.headerContainer}>
-                <h1 className={s.headerTitle}>Platform Inquiries</h1>
-                <p className={s.headerSubtitle}>
+            <div className="mb-12">
+                <h1 className="text-[2rem] font-extrabold text-text-main mb-2">Platform Inquiries</h1>
+                <p className="text-text-muted">
                     Review communication between buyer and seller.
                 </p>
             </div>
-            <div className={s.listContainer}>
+            <div className="admin-inquiries-list flex flex-col gap-6">
                 {inquiries.map((inq) => (
-                    <div className={s.inquiryCard} key={inq._id}>
-                        <div className={s.cardTopSection}>
-                            <div className={s.propertyInfoWrapper}>
-                                <div className={s.propertyIconWrapper}>
+                    <div className="card-premium p-6 md:p-8" key={inq._id}>
+                        <div className="flex flex-col sm:flex-row justify-between items-start mb-6 border-b border-[#f1f5f9] pb-6 gap-4 sm:gap-4">
+                            <div className="flex items-center gap-4">
+                                <div className="bg-primary-light p-3 rounded-xl text-primary">
                                     <HiOutlineHome size={24} />
                                 </div>
-                                <div className={s.propertyTextWrapper}>
-                                    <div className={s.propertyTitle}>
+                                <div className="w-full sm:w-auto text-left">
+                                    <div className="font-bold">
                                         {inq.property?.title || "Unknown property"}
                                     </div>
-                                    <div className={s.propertyId}>
+                                    <div className="text-xs text-text-muted">
                                         Property ID: {inq.property?.id}
                                     </div>
                                 </div>
                             </div>
-                            <div className={s.dateWrapper}>
-                                <HiOutlineCalendar className={s.dateIcon} />{" "}
+                            <div className="text-sm text-text-muted text-left sm:text-right w-full sm:w-auto">
+                                <HiOutlineCalendar className="inline align-middle mr-1" />{" "}
                                 {new Date(inq.createdAt).toLocaleString()}
                             </div>
                         </div>
-                        <div className={s.detailsGrid}>
-                            <div className={s.detailCard}>
-                                <div className={s.detailLabel}>Buyer detail</div>
-                                <div className={s.detailName}>{inq.buyer?.name}</div>
-                                <div className={s.detailEmail}>{inq.buyer?.email}</div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 mb-6">
+                            <div className="bg-[#f8fafc] p-4 md:p-5 rounded-2xl border border-[#f1f5f9]">
+                                <div className="text-xs font-bold text-text-muted uppercase mb-3 tracking-widest">Buyer detail</div>
+                                <div className="font-bold text-text-main mb-1">{inq.buyer?.name}</div>
+                                <div className="text-sm text-text-muted break-all">{inq.buyer?.email}</div>
                             </div>
-                            <div className={s.detailCard}>
-                                <div className={s.detailLabel}>Seller detail</div>
-                                <div className={s.detailName}>{inq.seller?.name}</div>
-                                <div className={s.detailEmail}>{inq.seller?.email}</div>
+                            <div className="bg-[#f8fafc] p-4 md:p-5 rounded-2xl border border-[#f1f5f9]">
+                                <div className="text-xs font-bold text-text-muted uppercase mb-3 tracking-widest">Seller detail</div>
+                                <div className="font-bold text-text-main mb-1">{inq.seller?.name}</div>
+                                <div className="text-sm text-text-muted break-all">{inq.seller?.email}</div>
                             </div>
                         </div>
-                        <div className={s.messageContainer}>
-                            <div className={s.messageHeader}>
+                        <div className="bg-bg-alt p-6 rounded-2xl border-l-[4px] border-primary">
+                            <div className="flex items-center gap-2 mb-2 text-primary font-bold text-sm">
                                 <HiOutlineAnnotation /> MESSAGE
                             </div>
-                            <p className={s.messageText}>"{inq.message}"</p>
+                            <p className="italic text-text-main leading-relaxed">"{inq.message}"</p>
                         </div>
                     </div>
                 ))}
                 {inquiries.length === 0 && (
-                    <div className={s.emptyState}>
-                        <div className={s.emptyIconWrapper}>
+                    <div className="card-premium py-24 px-8 text-center">
+                        <div className="text-text-muted mb-4">
                             <HiOutlineAnnotation size={48} className='mx-auto' />
                         </div>
                         <h2>No inquiries found</h2>
-                        <p className={s.emptytext}>
+                        <p className="text-text-muted">
                             There are no inquiries recorded on the platform yet.
                         </p>
                     </div>

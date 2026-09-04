@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { registerStyles as s } from '../../assets/dummyStyles'
 import { useAuth } from '../../context/AuthContext'
 import Navbar from '../../components/common/Navbar'
 import { Link, useNavigate } from 'react-router-dom'
@@ -43,35 +42,35 @@ const Register = () => {
         setIsLoading(false);
     }
     return (
-        <div className={s.pageWrapper}>
+        <div className="bg-bg-alt min-h-screen pt-32 max-lg:pt-28">
             <Navbar />
-            <div className={s.container}>
-                <div className={s.formCard}>
-                    <h2 className={s.heading}>Create Account</h2>
-                    <p className={s.subheading}>
+            <div className="container flex justify-center items-center pt-8 pb-16 sm:pt-4 sm:pb-8">
+                <div className="glass fade-in w-full max-w-[500px] p-10 sm:p-6 rounded-3xl sm:rounded-2xl shadow-card">
+                    <h2 className="text-[2rem] sm:text-2xl font-bold text-center mb-2 text-primary">Create Account</h2>
+                    <p className="text-center text-text-muted mb-8">
                         Join our community to find or list properties.
                     </p>
-                    {error && (<div className={s.errorMessage}>{error}</div>)}
+                    {error && (<div className="p-3 bg-red-100 text-red-600 rounded-lg mb-4 text-sm text-center">{error}</div>)}
 
-                    {success && (<div className={s.successMessage}>{success}</div>)}
+                    {success && (<div className="p-3 bg-green-100 text-green-600 rounded-lg mb-4 text-sm text-center">{success}</div>)}
 
-                    <form onSubmit={handleSubmit} className={s.form}>
+                    <form onSubmit={handleSubmit} className="flex flex-col gap-5 sm:gap-4">
                         <div>
-                            <label className={s.label}>Full Name</label>
+                            <label className="block mb-2 font-medium">Full Name</label>
                             <input type='text' name="name" placeholder='John Doe'
-                                value={formData.name} onChange={handleChange} required className={s.input} />
+                                value={formData.name} onChange={handleChange} required className="w-full py-3 px-4 rounded-lg border border-border outline-none focus:border-primary transition-colors" />
                         </div>
 
                         <div>
-                            <label className={s.label}>Email Address</label>
+                            <label className="block mb-2 font-medium">Email Address</label>
                             <input type='email' name="email" placeholder='name@company.com'
-                                value={formData.email} onChange={handleChange} required className={s.input} />
+                                value={formData.email} onChange={handleChange} required className="w-full py-3 px-4 rounded-lg border border-border outline-none focus:border-primary transition-colors" />
                         </div>
 
                         <div>
-                            <label className={s.label}>Password</label>
+                            <label className="block mb-2 font-medium">Password</label>
                             <div style={{ position: "relative" }}>
-                                <input type={showPassword ? "text" : "password"} name="password" placeholder='....' value={formData.password} onChange={handleChange} required className={s.input} style={{ paddingRight: "40px" }} />
+                                <input type={showPassword ? "text" : "password"} name="password" placeholder='....' value={formData.password} onChange={handleChange} required className="w-full py-3 px-4 rounded-lg border border-border outline-none focus:border-primary transition-colors" style={{ paddingRight: "40px" }} />
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}
@@ -95,25 +94,25 @@ const Register = () => {
                         </div>
                         <div>
                             <label className='block mb-3 font-medium'>Select Role</label>
-                            <div className={s.roleContainer}>
-                                <label className={`${s.roleLabelBase} ${formData.role === 'buyer' ? s.roleLabelActive : s.roleLabelInactive}`}>
-                                    <input type='radio' name="role" value="buyer" checked={formData.role === 'buyer'} onChange={handleChange} className={s.hiddenRadio} />
+                            <div className="flex gap-4">
+                                <label className={`flex-1 cursor-pointer p-3 rounded-lg border-2 text-center transition-all duration-200 ${formData.role === 'buyer' ? "border-primary bg-secondary" : "border-border bg-white"}`}>
+                                    <input type='radio' name="role" value="buyer" checked={formData.role === 'buyer'} onChange={handleChange} className="hidden" />
                                     Buyer
                                 </label>
 
-                                <label className={`${s.roleLabelBase} ${formData.role === 'seller' ? s.roleLabelActive : s.roleLabelInactive}`}>
-                                    <input type='radio' name="role" value="seller" checked={formData.role === 'seller'} onChange={handleChange} className={s.hiddenRadio} />
+                                <label className={`flex-1 cursor-pointer p-3 rounded-lg border-2 text-center transition-all duration-200 ${formData.role === 'seller' ? "border-primary bg-secondary" : "border-border bg-white"}`}>
+                                    <input type='radio' name="role" value="seller" checked={formData.role === 'seller'} onChange={handleChange} className="hidden" />
                                     Seller
                                 </label>
                             </div>
                         </div>
-                        <button className={s.submitButton} type='submit' disabled={isLoading}>
+                        <button className="btn btn-primary p-3.5 text-base mt-2" type='submit' disabled={isLoading}>
                             {isLoading ? "Creating Accont..." : "Create Account"}
                         </button>
                     </form>
-                    <p className={s.footerText}>
+                    <p className="text-center mt-8 text-text-muted">
                         Already have an account{" "}
-                        <Link to="/login" className={s.loginLink}>
+                        <Link to="/login" className="text-primary font-semibold hover:underline">
                             Sign in here
                         </Link>
                     </p>

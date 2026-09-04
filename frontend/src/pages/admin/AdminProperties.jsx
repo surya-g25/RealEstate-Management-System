@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { adminPropertiesStyles as s } from "../../assets/dummyStyles"
 import { useAuth } from "../../context/AuthContext"
 import PropertyCard from "../../components/common/PropertyCard"
 import { Link } from 'react-router-dom'
@@ -50,40 +49,40 @@ const AdminProperties = () => {
 
     if (loading) {
         return (
-            <div className={s.loaderFullPage}>
-                <div className={s.loader}></div>
+            <div className="loader-full-page">
+                <div className="loader"></div>
             </div>
         )
     }
 
     return (
         <>
-            <div className={s.headerContainer}>
-                <h1 className={s.pageTitle}>Property Moderation</h1>
-                <p className={s.pageSubtitle}>Review and manage all property listings accress the platform</p>
+            <div className="mb-12">
+                <h1 className="text-[2rem] font-extrabold text-text-main mb-2">Property Moderation</h1>
+                <p className="text-text-muted">Review and manage all property listings accress the platform</p>
             </div>
-            <div className={s.headerContainer}>
+            <div className="mb-12">
                 {" "}
                 {properties.length === 0 ? (
-                    <div className={s.emptyStateCard}>
+                    <div className="card-premium p-16 text-center text-[#64748b]">
                         No properties pending moderation.
                     </div>
                 ) : (
-                    <div className={s.propertiesGrid}>
+                    <div className="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-8 justify-items-center max-sm:grid-cols-1 max-sm:px-4">
                         {properties.map((p) => (
                             <PropertyCard key={p._id} property={p} renderActions={() => {
-                                <div className={s.actionWrapper}>
-                                    <div className={s.sellerInfo}>
-                                        <div className={s.sellerName}>
+                                <div className="flex-1 flex gap-2 items-center">
+                                    <div className="text-[0.75rem] text-[#64748b] flex-1">
+                                        <div className="font-bold">
                                             Seller: {p.seller?.name || "Unknown"}
                                         </div>
-                                        <div className={s.sellerEmail}>{p.seller?.email}</div>
+                                        <div className="text-[0.7rem]">{p.seller?.email}</div>
                                     </div>
-                                    <div className={s.buttonGroup}>
-                                        <Link to={`/property/${p._id}`} className={s.viewLink}>
+                                    <div className="flex gap-1">
+                                        <Link to={`/property/${p._id}`} className="btn btn-outline p-2">
                                             <HiOutlineExternalLink size={16} />
                                         </Link>
-                                        <button onClick={() => handleDelete(p._id)} className={s.deleteButton}>
+                                        <button onClick={() => handleDelete(p._id)} className="btn bg-[#fef2f2] text-[#dc2626] p-2 border border-[#fee2e2] hover:bg-red-100">
                                             <HiOutlineTrash size={16} />
                                         </button>
                                     </div>
