@@ -1,4 +1,5 @@
 import React from 'react'
+import Navbar from '../../components/common/Navbar'
 import { useAuth } from '../../context/AuthContext'
 import API_URL from '../../config'
 import axios from 'axios'
@@ -50,7 +51,7 @@ const MyInquiries = () => {
     }
   }
 
-  const handleStartChat = async () => {
+  const handleStartChat = async (inq) => {
     try {
       const res = await axios.post(`${API_URL}/api/chat/start`, {
         propertyId: inq.property?._id,
@@ -69,9 +70,11 @@ const MyInquiries = () => {
   };
 
   if (loading) {
-    <div className="loader-full-page">
-      <div className="loader"></div>
-    </div>
+    return (
+      <div className="loader-full-page">
+        <div className="loader"></div>
+      </div>
+    );
   }
 
   if (error) {
@@ -94,7 +97,7 @@ const MyInquiries = () => {
   const isSeller = user?.role === "seller";
 
   return (
-    <div className={user?.role === seller ? "bg-bg-alt min-h-screen" : "bg-transparent h-auto w-full"}>
+    <div className={user?.role === "seller" ? "bg-bg-alt min-h-screen" : "bg-transparent h-auto w-full"}>
       {user?.role !== "seller" && <Navbar />}
       <div className={`container fade-in w-full max-w-full px-4 sm:px-6 lg:px-8 overflow-hidden ${user?.role !== "seller" ? "py-12 pt-12" : "pt-0"}`}>
         <div className="mb-8 md:mb-12">

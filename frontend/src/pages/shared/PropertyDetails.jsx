@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Navbar from '../../components/common/Navbar'
+import PropertyCard from '../../components/common/PropertyCard'
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import axios from 'axios';
@@ -26,6 +27,7 @@ const PropertyDetails = () => {
         error: null,
     });
     const [isInWishlist, setIsInWishlist] = useState(false);
+    const [lightboxIndex, setLightboxIndex] = useState(null); // used to create an image lightbox/gallery
 
     useEffect(() => {
         const fetchDetails = async () => {
@@ -146,7 +148,6 @@ const PropertyDetails = () => {
         maximumFractionDigits: 0,
     }).format(property.price);
 
-    const [lightboxIndex, setLightboxIndex] = useState(null); // used to create an image lightbox/gallery
     const openLightbox = (index) => setLightboxIndex(index);
     const closeLightbox = () => setLightboxIndex(null);
     const nextImage = () =>
@@ -346,7 +347,7 @@ const PropertyDetails = () => {
                                     <span className="text-base font-normal opacity-80"> /month</span>
                                 )}
                             </div>
-                            {property.status.toLowerCase() === 'rent' && (
+                            {property.status?.toLowerCase() === 'rent' && (
                                 <div className="mt-4 border-t border-white/20 pt-4 flex flex-col gap-2">
                                     <div className="flex justify-between text-[0.9rem] gap-4">
                                         <span className="opacity-80 min-w-0 break-words">Security Deposit:</span>

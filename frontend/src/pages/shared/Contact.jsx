@@ -2,6 +2,8 @@ import React from 'react'
 import { contactStyles as s } from '../../assets/dummyStyles'
 import { useAuth } from '../../context/AuthContext'
 import { useState } from 'react';
+import axios from 'axios';
+import API_URL from '../../config';
 import Navbar from '../../components/common/Navbar';
 import { HiOutlineAnnotation, HiOutlineCheckCircle, HiOutlineMail, HiOutlinePhone, HiOutlineUser } from 'react-icons/hi';
 

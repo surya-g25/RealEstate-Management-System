@@ -28,14 +28,6 @@ const LandingPage = () => {
   });
   const [wishlistedIds, setWishlistedIds] = useState([]);
 
-  useEffect(() => {
-    fetchProperties();
-    fetchCounts();
-    if (user) {
-      fetchWishlist();
-    }
-  }, [user]);
-
   const fetchWishlist = async () => {
     try {
       const res = await axios.get(`${API_URL}/api/wishlist`, {
@@ -109,6 +101,14 @@ const LandingPage = () => {
       setLoading(false);
     }
   }
+
+  useEffect(() => {
+    fetchProperties();
+    fetchCounts();
+    if (user) {
+      fetchWishlist();
+    }
+  }, [user]);
 
   const handleSearch = (e) => {
     e.preventDefault();

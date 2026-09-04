@@ -1,7 +1,9 @@
 import React, { useState } from 'react'
 import { resetPasswordStyles as s } from '../../assets/dummyStyles'
 import Navbar from '../../components/common/Navbar'
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import axios from 'axios';
+import API_URL from '../../config';
 import { HiEye, HiEyeOff } from 'react-icons/hi';
 
 const ResetPassword = () => {
@@ -26,7 +28,7 @@ const ResetPassword = () => {
     setError("");
     setSuccess("");
     try {
-      const res = await axios.post(`${API_URL}/api/auth/reset-passowrd/${token}`,
+      const res = await axios.post(`${API_URL}/api/auth/reset-password/${token}`,
         { password },
       );
       if (res.data.success) {

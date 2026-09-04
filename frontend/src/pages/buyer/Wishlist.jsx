@@ -1,6 +1,8 @@
 import React from 'react'
 import { useAuth } from '../../context/AuthContext'
 import Navbar from '../../components/common/Navbar'
+import axios from 'axios'
+import API_URL from '../../config'
 import { useState } from 'react'
 import { useEffect } from 'react'
 import { HiHeart, HiTrash } from 'react-icons/hi'
@@ -47,7 +49,7 @@ const Wishlist = () => {
             );
 
         } 
-        catch (error) 
+        catch (err) 
         {
             alert(err.response?.data?.message || "Failed to remove from wishlist");
         }

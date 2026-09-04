@@ -11,6 +11,18 @@ export const AuthProvider = ({ children }) => {
     );
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate(); // from react-router-dom
+
+    // to logout
+    const logout = async () => {
+        setToken(null);
+        setUser(null);
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        sessionStorage.removeItem("token");
+        sessionStorage.removeItem("user");
+        navigate("/login");
+    };
+
     useEffect(() => {
         if (token) {
             const storedUser = localStorage.getItem("user") || sessionStorage.getItem("user");
@@ -32,7 +44,7 @@ export const AuthProvider = ({ children }) => {
                 return Promise.reject(error);
             }
         );
-        return axios.interceptors.response.eject(interceptor);
+        return () => axios.interceptors.response.eject(interceptor);
     }, [token]);
 
     // login
@@ -74,16 +86,7 @@ export const AuthProvider = ({ children }) => {
         }
     }
 
-    // to logout
-    const logout = async () => {
-        setToken(null);
-        setUser(null);
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-        sessionStorage.removeItem("token");
-        sessionStorage.removeItem("user");
-        navigate("/login");
-    }
+
 
     // to get user details
     const refreshUser = async () => {

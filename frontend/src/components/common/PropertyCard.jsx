@@ -10,9 +10,10 @@ const PropertyCard = ({
     isWishlisted,
     onToogleWishlist
 }) => {
-    if (!property) return null;
     const { user } = useAuth();
     const navigate = useNavigate();
+
+    if (!property) return null;
 
     // to wihslist click
     const handleWishlistClick = (e) => {

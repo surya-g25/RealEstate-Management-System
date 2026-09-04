@@ -5,13 +5,15 @@ import { useChat } from '../../context/ChatContext'
 import { useLocation } from 'react-router-dom'
 import { useState, useRef } from 'react'
 import { useEffect } from 'react'
+import axios from 'axios'
+import API_URL from '../../config'
 import Navbar from '../../components/common/Navbar'
 import { HiChevronLeft, HiOutlineChatAlt2, HiOutlineTrash, HiPaperAirplane } from 'react-icons/hi'
 
 const ChatMessages = () => {
     const {user,token}=useAuth();
     const location=useLocation();
-    const {socket,activeChat,setActiveChat,joinChat, }=useChat();
+    const {socket,activeChat,setActiveChat,joinChat,sendMessage}=useChat();
 
     const [conversations,setConversations]=useState([]);
     const [messages,setMessages]=useState([]);
@@ -187,16 +189,18 @@ const ChatMessages = () => {
 
     if(loading)
     {
-        <div className={s.loaderFullPage}>
-            <div className={s.loader}></div>
-        </div>
+        return (
+            <div className={s.loaderFullPage}>
+                <div className={s.loader}></div>
+            </div>
+        );
     }
 
     return (
         <div className={`${s.chatContainer} ${user?.role==='seller'?s.chatContainerSeller:s.chatContainerNonSeller}`}>
-            {user?.role==='seller' && <Navbar/>}
+            {user?.role !== 'seller' && <Navbar/>}
             <div className={s.chatWrapper}>
-                <div className={`${s.sidebar} ${s.activeChat?s.sidebarHidden:""}`}>
+                <div className={`${s.sidebar} ${activeChat ? s.sidebarHidden : ""}`}>
                     <div className={s.sidebarHeader}>
                         <h2 className={s.sidebarTitle}>Messages</h2>
                     </div>
@@ -227,7 +231,7 @@ const ChatMessages = () => {
                                             {chat.messages.at(-1)?.text || "Started a conversation"}
                                         </div>
                                     </div>
-                                    <button onClick={()=>handleDeleteChat(e,chat._id)} className={s.deleteChatButton} title='Delete Conversation'>
+                                    <button onClick={(e)=>handleDeleteChat(e,chat._id)} className={s.deleteChatButton} title='Delete Conversation'>
                                         <HiOutlineTrash/>
                                     </button>
                                 </div>

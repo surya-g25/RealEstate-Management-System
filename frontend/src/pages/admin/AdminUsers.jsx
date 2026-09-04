@@ -1,6 +1,8 @@
-import React, { useEffect, useRef, useState, useMemo, useEffect as useEffectHook } from 'react'
+import React, { useEffect, useRef, useState, useMemo } from 'react'
 import { adminUsersStyles as s } from '../../assets/dummyStyles'
 import { useAuth } from '../../context/AuthContext'
+import axios from 'axios'
+import API_URL from '../../config'
 import { HiOutlineFilter, HiOutlineIdentification, HiOutlineLockClosed, HiOutlineLockOpen, HiOutlineMail, HiOutlineTrash } from 'react-icons/hi';
 
 const AdminUsers = () => {
@@ -32,7 +34,7 @@ const AdminUsers = () => {
     }, [token]);
 
     // to handle the click outside the box 
-    useEffectHook(() => {
+    useEffect(() => {
         const handleClickOutside = (e) => {
             if (filterRef.current && !filterRef.current.contains(e.target)) {
                 setOpenFilter(false);
@@ -50,16 +52,16 @@ const AdminUsers = () => {
     }, [users, roleFilter]);
 
     // to block a prticular user
-    const handleBlock = async () => {
+    const handleBlock = async (id) => {
         try {
             const res = await axios.patch(`${API_URL}/api/admin/users/${id}/block`, {}, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             if (res.data.success) {
                 setUsers(
-                    users.map((u) => {
+                    users.map((u) => 
                         u._id === id ? { ...u, isBlocked: res.data.isBlocked } : u
-                    })
+                    )
                 );
             }
         }

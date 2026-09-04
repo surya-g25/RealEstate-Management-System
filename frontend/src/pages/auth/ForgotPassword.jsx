@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import { forgotPasswordStyles as s } from '../../assets/dummyStyles'
 import Navbar from '../../components/common/Navbar'
 import { Link } from 'react-router-dom'
+import axios from 'axios'
+import API_URL from '../../config'
 
 const ForgotPassword = () => {
     const [email, setEmail] = useState("");
