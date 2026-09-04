@@ -1,5 +1,4 @@
 import React from 'react'
-import { logoStyles as s } from '../../assets/dummyStyles';
 import { Link } from 'react-router-dom';
 import {HiOutlineLibrary} from 'react-icons/hi';
 
@@ -12,13 +11,13 @@ const Logo = ({
   return (
         <Link to="/" 
                 {...props}
-                className={`${s.link} ${props.className||""}`} 
+                className={`font-bold text-primary flex items-center gap-3 no-underline whitespace-nowrap ${props.className||""}`} 
                 style={{ fontSize, ...props.style }}
                 >
-                <div className={s.iconWrapper}>
+                <div className="bg-primary text-white p-2 rounded-[10px] flex items-center justify-center shadow-[0_4px_12px_rgba(13,110,89,0.2)]">
                         <HiOutlineLibrary size={iconSize}/>
                 </div>
-                {showText && <span className={s.text}>RealEstate</span>}
+                {showText && <span className="tracking-[-0.02em] text-[#0d6e59] font-extrabold">RealEstate</span>}
         </Link>
     )
 }

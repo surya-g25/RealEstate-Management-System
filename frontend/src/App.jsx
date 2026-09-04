@@ -33,7 +33,7 @@ import Wishlist from './pages/buyer/Wishlist';
 
 // scroll to top when the route is changes
 const ScrollToTopOnRouteChange = () => {
-  const { pathname } = useLocation();
+  const { pathname } = useLocation(); // gives the cureent pathname (the updated one)
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -47,12 +47,12 @@ const ScrollTopButton = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      setVisible(window.screenY > 300);
+      setVisible(window.scrollY > 300); //tells how many pixels the page has been scrolled vertically
     };
     window.addEventListener("scroll", handleScroll);
-    handleScroll();
+    handleScroll(); // when the user is already at 500px, it will show the button immediately
 
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll); // cleanup function
   }, []);
 
   const handleClick = () => {
@@ -88,6 +88,7 @@ export const App = () => {
       document.documentElement.style.overflowX = "";
     };
   }, []); // prevent horizontal overflow on the whole app 
+
   return (
     <div className='min-h-screen w-full overflow-x-hidden'>
       <ScrollToTopOnRouteChange />

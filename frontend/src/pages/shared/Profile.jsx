@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { profileStyles as s } from '../../assets/dummyStyles'
 import { useAuth } from '../../context/AuthContext'
 import Navbar from '../../components/common/Navbar';
 import { HiCheck, HiOutlineLocationMarker, HiOutlineMail, HiOutlinePhone, HiOutlineUser, HiX } from 'react-icons/hi';
@@ -81,25 +80,25 @@ const Profile = () => {
   }
 
   return (
-    <div className={s.containerWrapper(user?.role)}>
+    <div className={user?.role !== 'seller' ? 'bg-bg-alt min-h-screen pt-32 max-lg:pt-28' : 'bg-transparent min-h-auto'}>
       {user?.role !== "seller" && <Navbar />}
-      <div className={s.mainContainer(user?.role)}>
-        <header className={s.header}>
-          <h1 className={s.pageTitle}>Personal Profile</h1>
-          <p className={s.pageSubtitle}>
+      <div className={`container fade-in max-w-[800px] mb-16 ${user?.role !== 'seller' ? 'mx-auto pt-12' : 'mx-0 pt-0'}`}>
+        <header className="mb-12 md:text-center md:mb-8">
+          <h1 className="text-[2.5rem] mb-2 md:text-[2rem]">Personal Profile</h1>
+          <p className="text-text-muted">
             Manage your personal information and account settings.
           </p>
         </header>
-        <div name="one" className={s.card}>
-          <div className={s.profileHeader}>
-            <div className={s.avatarSection}>
-              <div className={s.avatarWrapper}>
+        <div name="one" className="card-premium p-12 md:p-6">
+          <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8 mb-10 md:mb-16 text-center md:text-left">
+            <div className="relative">
+              <div className="w-[120px] h-[120px] rounded-[2.5rem] bg-primary-light overflow-hidden flex items-center justify-center text-[3rem] font-bold text-primary border-4 border-white shadow-lg">
                 {imagePreview ? (
-                  <img src={imagePreview} alt="preview" className={s.avatarImage} />
+                  <img src={imagePreview} alt="preview" className="w-full h-full object-cover" />
                 ) : !removeProfilePic && user?.profilePic ? (
-                  <img src={user.profilePic} alt="pic" className={s.avatarImage} />
+                  <img src={user.profilePic} alt="pic" className="w-full h-full object-cover" />
                 ) : (
-                  <span className={s.avatarPlaceholder}>
+                  <span className="text-primary opacity-60">
                     {user?.name?.[0]?.toUpperCase() || "U"}
                   </span>
                 )}
@@ -107,7 +106,7 @@ const Profile = () => {
               {isEditing && (
                 <>
                   {/* image upload button  */}
-                  <label className={s.uploadButton}>
+                  <label className="absolute -bottom-2.5 -right-2.5 bg-primary text-white w-10 h-10 rounded-full flex items-center justify-center cursor-pointer shadow-[0_4px_10px_rgba(0,0,0,0.2)] border-4 border-white z-10 hover:bg-primary-dark transition-colors">
                     <input type="file" onChange={handleImageChange} className='hidden'
                       accept='image/*' />
                     <HiOutlineUser size={20} />
@@ -118,7 +117,7 @@ const Profile = () => {
                       setImagePreview(null)
                       setImageFile(null)
                       setRemoveProfilePic(true)
-                    }} className={s.removeButton} title='Remove Profile Picture'>
+                    }} className="absolute -top-2.5 -right-2.5 bg-red-500 text-white w-10 h-10 rounded-full flex items-center justify-center cursor-pointer shadow-[0_4px_10px_rgba(0,0,0,0.2)] border-4 border-white z-10 hover:bg-red-600 transition-colors" title='Remove Profile Picture'>
                       <HiX size={20} />
                     </button>
                   )}
@@ -126,27 +125,27 @@ const Profile = () => {
               )}
             </div>
             <div>
-              <h2 className={s.userName}>{user?.name}</h2>
-              <span className={s.roleBadge}>{user?.role?.toUpperCase()}</span>
+              <h2 className="text-[1.75rem] mb-1 break-all sm:break-normal">{user?.name}</h2>
+              <span className="badge badge-sale bg-primary-light text-primary px-4 py-2 rounded-xl">{user?.role?.toUpperCase()}</span>
             </div>
           </div>
-          {error && (<div className={s.errorMessage}>{error}</div>)}
+          {error && (<div className="p-4 bg-red-100 text-red-600 rounded-xl mb-8">{error}</div>)}
           {isEditing ? (
-            <form onSubmit={handleUpdate} className={s.editForm}>
+            <form onSubmit={handleUpdate} className="flex flex-col gap-8">
               <div>
-                <label className={s.label}>Full Name</label>
-                <input type="text" name="name" value={formData.name} onChange={handleInputChange} className={s.input} required />
+                <label className="block mb-2 text-sm font-semibold">Full Name</label>
+                <input type="text" name="name" value={formData.name} onChange={handleInputChange} className="w-full p-3.5 rounded-xl border border-border outline-none focus:border-primary transition-colors" required />
               </div>
               <div>
-                <label className={s.label}>Phone Number</label>
-                <input type='tel' name="phone" value={formData.phone} onChange={handleInputChange} maxLength="10" pattern='\d*' className={s.input} placeholder='Enter your 10 digit phone number' />
+                <label className="block mb-2 text-sm font-semibold">Phone Number</label>
+                <input type='tel' name="phone" value={formData.phone} onChange={handleInputChange} maxLength="10" pattern='\d*' className="w-full p-3.5 rounded-xl border border-border outline-none focus:border-primary transition-colors" placeholder='Enter your 10 digit phone number' />
               </div>
               <div>
-                <label className={s.label}>Address</label>
-                <textarea name="address" value={formData.address} className={s.textarea} placeholder="Enter your full address" onChange={handleInputChange} />
+                <label className="block mb-2 text-sm font-semibold">Address</label>
+                <textarea name="address" value={formData.address} className="w-full h-[100px] p-3.5 rounded-xl border border-border outline-none resize-none focus:border-primary transition-colors" placeholder="Enter your full address" onChange={handleInputChange} />
               </div>
-              <div className={s.formActions}>
-                <button type="submit" disabled={loading} className={s.saveButton}>
+              <div className="flex flex-col md:flex-row gap-4 mt-4">
+                <button type="submit" disabled={loading} className="btn btn-primary flex-1 flex items-center justify-center gap-2">
                   <HiCheck size={20} />{loading ? "Saving..." : "Save changes"}
                 </button>
                 <button type="button" onClick={() => {
@@ -154,45 +153,45 @@ const Profile = () => {
                   setImageFile(null);
                   setImagePreview(null);
                   setRemoveProfilePic(false);
-                }} className={s.cancelButton}>
+                }} className="btn btn-outline flex-1 flex items-center justify-center gap-2">
                   <HiX size={20} /> Cancel
                 </button>
               </div>
             </form>
           ) : (
-            <div className={s.infoSection}>
-              <div className={s.infoItem}>
-                <div className={s.infoIcon}>
+            <div className="flex flex-col gap-10">
+              <div className="flex items-center gap-6">
+                <div className="w-12 h-12 rounded-2xl bg-[#f8fafc] flex items-center justify-center text-primary shrink-0">
                   <HiOutlineMail size={24} />
                 </div>
                 <div>
-                  <div className={s.infoLabel}>Email Address</div>
-                  <div className={s.infoValue}>{user?.email}</div>
+                  <div className="text-sm text-text-muted mb-0.5">Email Address</div>
+                  <div className="font-semibold break-all sm:break-normal">{user?.email}</div>
                 </div>
               </div>
 
-              <div className={s.infoItem}>
-                <div className={s.infoIcon}>
+              <div className="flex items-center gap-6">
+                <div className="w-12 h-12 rounded-2xl bg-[#f8fafc] flex items-center justify-center text-primary shrink-0">
                   <HiOutlinePhone size={24} />
                 </div>
                 <div>
-                  <div className={s.infoLabel}>Phone Number</div>
-                  <div className={s.infoValue}>{user?.phone || "Not provided"}</div>
+                  <div className="text-sm text-text-muted mb-0.5">Phone Number</div>
+                  <div className="font-semibold break-all sm:break-normal">{user?.phone || "Not provided"}</div>
                 </div>
               </div>
 
-              <div className={s.infoItem}>
-                <div className={s.infoIcon}>
+              <div className="flex items-center gap-6">
+                <div className="w-12 h-12 rounded-2xl bg-[#f8fafc] flex items-center justify-center text-primary shrink-0">
                   <HiOutlineLocationMarker size={24} />
                 </div>
                 <div>
-                  <div className={s.infoLabel}>Location / Address</div>
-                  <div className={s.infoValue}>{user?.address || "Not provided"}</div>
+                  <div className="text-sm text-text-muted mb-0.5">Location / Address</div>
+                  <div className="font-semibold break-all sm:break-normal">{user?.address || "Not provided"}</div>
                 </div>
               </div>
 
-              <div className={s.editButtonWrapper}>
-                <button onClick={() => setIsEditing(true)} className={s.editProfileButton}>
+              <div className="mt-8 pt-8 border-t border-border">
+                <button onClick={() => setIsEditing(true)} className="btn btn-primary px-10 py-3.5">
                   Edit Profile Details
                 </button>
               </div>

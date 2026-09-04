@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react'
 import axios from 'axios'
-import { propertiesStyles as s } from '../../assets/dummyStyles'
 import { useAuth } from '../../context/AuthContext'
 import Navbar from '../../components/common/Navbar'
 import { HiAdjustments, HiFilter, HiSearch, HiViewGrid, HiViewList, HiX } from 'react-icons/hi'
@@ -202,34 +201,34 @@ const Properties = () => {
   const [showMobileFilters, setShowMobileFilters] = useState(false);
 
   return (
-    <div className={s.pageContainer}>
+    <div className="bg-[#f8fafc] min-h-screen pb-16 pt-32 max-lg:pt-28">
       <Navbar />
 
-      <div className={s.container}>
-        <div className={s.mobileFilterButtonWrapper}>
-          <button onClick={() => setShowMobileFilters(true)} className={s.mobileFilterButton}>
+      <div className="container">
+        <div className="mobile-filter-btn hidden mb-6 max-[1024px]:block">
+          <button onClick={() => setShowMobileFilters(true)} className="btn btn-outline w-full flex justify-center gap-3 bg-white py-4">
             <HiFilter /> Show Filters & Search
           </button>
         </div>
-        <div className={s.layout}>
-          <aside className={`${s.sidebar} ${showMobileFilters ? s.sidebarVisible : s.sidebarHidden}`}>
-            <div className={s.sidebarHeader}>
-              <div className={s.sidebarTitleWrapper}>
-                <HiFilter className={s.sidebarTitleIcon} />
-                <h2 className={s.sidebarTitle}>Filters</h2>
+        <div className="properties-layout grid grid-cols-[minmax(280px,300px)_1fr] gap-8 max-[1024px]:grid-cols-1">
+          <aside className={`filters-sidebar scrollbar-hide bg-white rounded-[1.5rem] p-8 shadow-[0_4px_20px_rgba(0,0,0,0.03)] max-h-[calc(100vh-120px)] overflow-y-auto sticky top-[100px] border border-[#f1f5f9] z-[90] max-[1024px]:fixed max-[1024px]:max-h-screen max-[1024px]:top-0 max-[1024px]:bottom-0 max-[1024px]:w-full max-[1024px]:max-w-[350px] max-[1024px]:rounded-none max-[1024px]:transition-[left] max-[1024px]:duration-300 max-[1024px]:ease max-[1024px]:z-[2005] ${showMobileFilters ? "max-[1024px]:left-0" : "max-[1024px]:-left-full"}`}>
+            <div className="flex justify-between items-center mb-8">
+              <div className="flex items-center gap-2">
+                <HiFilter className="text-primary" />
+                <h2 className="text-xl font-bold m-0">Filters</h2>
               </div>
-              <div className={s.sidebarHeaderActions}>
-                <button onClick={resetFilters} className={s.resetButton}>Reset</button>
-                <button className={s.closeMobileFilters} onClick={() => setShowMobileFilters(false)}>
+              <div className="flex gap-4 items-center">
+                <button onClick={resetFilters} className="bg-transparent border-none text-primary text-sm font-semibold cursor-pointer">Reset</button>
+                <button className="mobile-close-filters hidden max-[1024px]:flex items-center justify-center bg-[#f1f5f9] border-none p-2 rounded-full cursor-pointer" onClick={() => setShowMobileFilters(false)}>
                   <HiX />
                 </button>
               </div>
             </div>
-            <div className={s.filtersScrollArea}>
-              <div className={s.filterSection}>
-                <label className={s.filterLabel}>Location</label>
-                <div className={s.searchInputWrapper}>
-                  <HiSearch className={s.searchIcon} />
+            <div className="filters-scroll-area">
+              <div className="mb-8">
+                <label className="block font-bold mb-3 text-[0.9375rem]">Location</label>
+                <div className="relative">
+                  <HiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-[#94a3b8]" />
                   <input type="text" placeholder='Search by City...' value={filters.city}
                     onChange={(e) => {
                       const updatedFilters = {
@@ -239,14 +238,14 @@ const Properties = () => {
                       setFilters(updatedFilters);
                       debouncedFetch(updatedFilters);
                     }}
-                    className={s.searchInput} />
+                    className="w-full py-3 pr-4 pl-10 rounded-xl border border-[#e2e8f0] outline-none text-sm" />
                 </div>
               </div>
               {/* Price Range */}
-              <div className={s.filterSection}>
-                <div className={s.priceHeader}>
-                  <label className={s.filterLabel}>Price Range</label>
-                  <span className={s.priceValue}>
+              <div className="mb-8">
+                <div className="flex justify-between items-center mb-4">
+                  <label className="block font-bold mb-3 text-[0.9375rem]">Price Range</label>
+                  <span className="text-primary font-bold text-[0.875rem]">
                     {filters.maxPrice >= 10000000
                       ? `₹${(filters.maxPrice / 10000000).toFixed(2)} Cr`
                       : `₹${(filters.maxPrice / 100000).toFixed(1)} L`}
@@ -259,23 +258,23 @@ const Properties = () => {
                   step="500000"
                   value={filters.maxPrice}
                   onChange={handlePriceChange}
-                  className={s.priceSlider}
+                  className="w-full accent-primary cursor-pointer"
                 />
-                <div className={s.priceLabels}>
+                <div className="flex justify-between mt-2 text-[#94a3b8] text-[0.75rem]">
                   <span>₹1L</span>
                   <span>₹10Cr</span>
                 </div>
               </div>
               {/* propertyType filter */}
-              <div className={s.filterSection}>
-                <label className={s.filterLabel}>Property Type:</label>
-                <div className={s.checkboxGroup}>
+              <div className="mb-8">
+                <label className="block font-bold mb-3 text-[0.9375rem]">Property Type:</label>
+                <div className="flex flex-col gap-3">
                   {propertyTypes.map((type) => (
-                    <label key={type.value} className={s.checkboxLabel}>
+                    <label key={type.value} className="flex items-center gap-3 cursor-pointer text-sm text-[#64748b]">
                       <input type="checkbox"
                         checked={filters.propertyType.includes(type.value)}
                         onChange={(e) => handleCheckboxChange("propertyType", type.value)}
-                        className={s.checkbox} />
+                        className="w-[18px] h-[18px] cursor-pointer accent-primary" />
 
                       {type.label}
                     </label>
@@ -283,26 +282,26 @@ const Properties = () => {
                 </div>
               </div>
               {/* bhk filter */}
-              <div className={s.filterSection}>
-                <label className={s.filterLabel}>BHK (Bedrooms)</label>
-                <div className={s.bhkGroup}>
+              <div className="mb-8">
+                <label className="block font-bold mb-3 text-[0.9375rem]">BHK (Bedrooms)</label>
+                <div className="flex flex-wrap gap-2">
                   {bhkOptions.map((option) => (
                     <button key={option}
                       onClick={() => handleBhkSelect(option)}
-                      className={`${s.bhkButton} ${filters.bhk === option ? s.bhkButtonActive : s.bhkButtonInactive}`}
+                      className={`flex-1 min-w-[50px] p-2 rounded-lg text-sm font-bold cursor-pointer transition-all duration-200 border border-[#e2e8f0] bg-white text-[#64748b] ${filters.bhk === option ? "border border-primary bg-primary-light text-primary-dark" : "border border-[#e2e8f0] bg-white text-[#64748b]"}`}
                     >{option}</button>
                   ))}
                 </div>
               </div>
-              <div className={s.filterSection}>
-                <label className={s.filterLabel}>Furnishing</label>
-                <div className={s.checkboxGroup}>
+              <div className="mb-8">
+                <label className="block font-bold mb-3 text-[0.9375rem]">Furnishing</label>
+                <div className="flex flex-col gap-3">
                   {furnishingOptions.map((option) => (
-                    <label key={option.value} className={s.checkboxLabel}>
+                    <label key={option.value} className="flex items-center gap-3 cursor-pointer text-sm text-[#64748b]">
                       <input type="checkbox"
                         checked={filters.furnishing?.includes(option.value)}
                         onChange={(e) => handleCheckboxChange("furnishing", option.value)}
-                        className={s.checkbox}
+                        className="w-[18px] h-[18px] cursor-pointer accent-primary"
                       />
                       {option.label}
                     </label>
@@ -312,36 +311,36 @@ const Properties = () => {
             </div>
           </aside>
           {/* main content */}
-          <main className={s.mainContent}>
-            <div className={s.contentHeader}>
+          <main className="">
+            <div className="content-header bg-white py-5 px-8 rounded-[1.25rem] mb-8 shadow-[0_4px_20px_rgba(0,0,0,0.03)] flex justify-between items-center border border-[#f1f5f9] max-[1024px]:p-4 max-[1024px]:flex-col max-[1024px]:gap-4 max-[1024px]:items-start">
               <div>
-                <span className={s.resultCount}>
+                <span className="text-[#64748b] text-[0.9375rem]">
                   Showing {" "}
-                  <strong className={s.resultCountStrong}>
+                  <strong className="text-text-main">
                     {loading ? "..." : properties.length}
                   </strong>{" "}
                   properties
                 </span>
               </div>
-              <div className={s.headerControls}>
-                <div className={s.viewModeToggle}>
+              <div className="view-controls flex items-center gap-6 max-[1024px]:w-full max-[1024px]:justify-between">
+                <div className="view-mode-toggle flex gap-2 p-1 bg-[#f1f5f9] rounded-xl max-sm:hidden">
                   <button onClick={() => setViewMode("grid")}
-                    className={`${s.viewModeButton} ${viewMode === 'grid' ? s.viewModeActive : s.viewModeInactive}`}
+                    className={`p-2 rounded-lg border-none cursor-pointer ${viewMode === 'grid' ? "bg-white shadow-[0_2px_8px_rgba(0,0,0,0.05)] text-primary" : "bg-transparent text-[#94a3b8]"}`}
                   >
                     <HiViewGrid size={20} />
                   </button>
                   <button onClick={() => setViewMode("list")}
-                    className={`${s.viewModeButton} ${viewMode === 'list' ? s.viewModeActive : s.viewModeInactive}`}
+                    className={`p-2 rounded-lg border-none cursor-pointer ${viewMode === 'list' ? "bg-white shadow-[0_2px_8px_rgba(0,0,0,0.05)] text-primary" : "bg-transparent text-[#94a3b8]"}`}
                   >
                     <HiViewList size={20} />
                   </button>
                 </div>
-                <div className={s.sortControl}>
-                  <span className={s.sortLabel}>Sort:</span>
+                <div className="sort-control flex items-center gap-2">
+                  <span className="text-sm text-[#64748b]">Sort:</span>
                   <select
                     value={filters.sort}
                     onChange={handleSortChange}
-                    className={s.sortSelect}
+                    className="py-2 px-4 bg-white border border-[#e2e8f0] rounded-xl text-sm font-semibold cursor-pointer outline-none text-text-main appearance-auto"
                   >
                     <option value="latest">Latest</option>
                     <option value="priceLow">Price: Low to High</option>
@@ -352,31 +351,31 @@ const Properties = () => {
             </div>
             {/* property grid */}
             {loading ? (
-              <div className={s.skeletonGrid}>
+              <div className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-6">
                 {[1, 2, 3, 4, 5, 6].map((i) => (
-                  <div key={i} className={s.skeletonCard}></div>
+                  <div key={i} className="skeleton h-[400px] rounded-[1.25rem]"></div>
                 ))}
 
               </div>
             ) : error ? (
-              <div className={s.errorContainer}>
-                <HiX size={48} className={s.errorIcon} />
-                <h3 className={s.errorTitle}>{error}</h3>
-                <button onClick={applyFilters} className={s.errorButton}>Try Again</button>
+              <div className="p-16 text-center bg-white rounded-[1.5rem]">
+                <HiX size={48} className="text-red-500 mb-4 mx-auto" />
+                <h3 className="text-text-main mb-2">{error}</h3>
+                <button onClick={applyFilters} className="btn btn-outline">Try Again</button>
               </div>
             ) : properties.length === 0 ? (
-              <div className={s.emptyContainer}>
-                <div className={s.emptyIconWrapper}>
-                  <HiAdjustments size={32} className={s.emptyIcon} />
+              <div className="py-24 px-8 text-center bg-white rounded-[1.5rem] border border-[#f1f5f9]">
+                <div className="w-[80px] h-[80px] bg-[#f1f5f9] rounded-full flex items-center justify-center mx-auto mb-6">
+                  <HiAdjustments size={32} className="text-[#94a3b8]" />
                 </div>
-                <h2 className={s.emptyTitle}>No Properties Found</h2>
-                <p className={s.emptyText}>
+                <h2 className="text-2xl font-bold text-text-main mb-2">No Properties Found</h2>
+                <p className="text-[#64748b] max-w-[400px] mx-auto mb-8">
                   Broaden your search criteria
                 </p>
-                <button onClick={resetFilters} className={s.emptyButton}>Clear All</button>
+                <button onClick={resetFilters} className="btn btn-primary px-8 py-3">Clear All</button>
               </div>
             ) : (
-              <div className={`${s.propertyList} ${viewMode === 'grid' ? s.propertyListGrid : s.propertyListList}`}>
+              <div className={`property-list grid gap-6 ${viewMode === 'grid' ? "grid-cols-[repeat(auto-fill,minmax(280px,1fr))] max-sm:grid-cols-1 max-sm:justify-items-center" : "grid-cols-1"}`}>
                 {properties.filter((p) => p)
                   .map((p) => (
                     <PropertyCard key={p._id}
@@ -392,7 +391,7 @@ const Properties = () => {
         </div>
       </div>
       {showMobileFilters && (
-        <div className={s.mobileOverlay}
+        <div className="fixed inset-0 bg-black/50 z-[2004]"
           onClick={() => setShowMobileFilters(false)}
         />
       )}
