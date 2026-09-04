@@ -20,7 +20,7 @@ const AdminSidebar = ({isOpen,onClose}) => {
     ];
     return (
         <>
-            <div className={`fixed inset-0 w-full h-full bg-black/30 backdrop-blur-sm z-[950] transition-all duration-300 ${isOpen ? 'opacity-100 visible' : 'opacity-0 invisible hidden md:block'}`} onCanPlay={onClose}></div>
+            <div className={`fixed inset-0 w-full h-full bg-black/30 backdrop-blur-sm z-[950] transition-all duration-300 ${isOpen ? 'opacity-100 visible' : 'opacity-0 invisible hidden md:block'}`} onClick={onClose}></div>
             <aside className={`fixed left-0 top-0 w-[260px] h-screen bg-white border-r border-[#f1f5f9] py-8 px-5 flex flex-col z-[1000] transition-transform duration-300 ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
                 <div className="px-3 mb-10 flex justify-between items-center">
                     <Logo fontSize='1.25rem' iconSize={20}/>

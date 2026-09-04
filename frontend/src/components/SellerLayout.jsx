@@ -11,7 +11,7 @@ const SellerLayout = () => {
     const location = useLocation();
 
     // allow access to public route for seller
-    const isPublicDashboardRoute = ['/contact', 'profile'].includes(location.pathname);
+    const isPublicDashboardRoute = ['/contact', '/profile'].includes(location.pathname);
 
     return (
 

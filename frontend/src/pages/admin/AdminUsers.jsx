@@ -65,7 +65,7 @@ const AdminUsers = () => {
             }
         }
         catch (err) {
-            alert("Operation Failed");
+            alert(err.response?.data?.message || "Operation Failed");
         }
     }
 
@@ -82,14 +82,16 @@ const AdminUsers = () => {
 
         }
         catch (err) {
-            alert("Failed to delete user");
+            alert(err.response?.data?.message || "Failed to delete user");
         }
     }
 
     if (loading) {
-        <div className='loader-full-page'>
-            <div className='loader'></div>
-        </div>
+        return (
+            <div className='loader-full-page'>
+                <div className='loader'></div>
+            </div>
+        );
     }
 
     return (

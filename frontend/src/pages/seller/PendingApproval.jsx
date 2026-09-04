@@ -36,7 +36,7 @@ const PendingApproval = () => {
                 Browse Properties
             </a>
             <button onClick={handleManualRefresh} disabled={refreshing}
-                className={`inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-200 shadow-sm ${ refreshUser ? "bg-slate-100 text-slate-400 cursor-not-allowed" : 
+                className={`inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-200 shadow-sm ${ refreshing ? "bg-slate-100 text-slate-400 cursor-not-allowed" : 
                 "bg-primary text-white hover:bg-primary-dark cursor-pointer"}`} 
             >
                 <HiOutlineRefresh size={20} className={refreshing?"animate-spin":""}/>

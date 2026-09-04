@@ -31,13 +31,13 @@ const Login = () => {
                 localStorage.getItem("user") || sessionStorage.getItem("user")
             );
             if (storedUser?.role === 'admin') {
-                navigate("/admin-dashboard")
+                navigate("/admin-dashboard");
             }
-            if (storedUser?.role === 'seller') {
-                navigate("/dashboard")
+            else if (storedUser?.role === 'seller') {
+                navigate("/dashboard");
             }
             else {
-                navigate("/")
+                navigate("/");
             }
         }
         else {

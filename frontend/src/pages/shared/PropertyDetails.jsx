@@ -108,18 +108,23 @@ const PropertyDetails = () => {
         if (!user) return navigate("/login");
         if (user.role !== "buyer") return alert("Only buyers can chat with sellers");
 
+        const sellerId = property.seller?._id || property.seller;
+        if (!sellerId) return alert("Seller information is not available for this property");
+
         try {
             const res = await axios.post(`${API_URL}/api/chat/start`, {
                 propertyId: id,
-                sellerId: property.seller._id
+                sellerId
             }, { headers: { Authorization: `Bearer ${token}` } });
             const chat = res.data;
-            await axios.post(`${API_URL}/api/chat/send`, {
-                chatId: chat._id,
-                text: `(Context: Interested in property "${property.title}")`,
-                image: property.images[0],
-            }, { headers: { Authorization: `Bearer ${token}` } });
-            navigate("/chat-messages", { state: { chat } });
+            if (chat && chat._id) {
+                await axios.post(`${API_URL}/api/chat/send`, {
+                    chatId: chat._id,
+                    text: `(Context: Interested in property "${property.title}")`,
+                    image: property.images?.[0] || null,
+                }, { headers: { Authorization: `Bearer ${token}` } });
+                navigate("/chat-messages", { state: { chat } });
+            }
         }
         catch (err) {
             console.error("Error starting chat : ", err);
@@ -136,8 +141,15 @@ const PropertyDetails = () => {
     }
     if (error || !property) {
         return (
-            <div className='container' style={{ padding: '4rem', textAlign: "center" }}>
-                {error || "Property not found"}
+            <div className="bg-[#fdfdfd] min-h-screen pb-24 pt-32 max-lg:pt-28">
+                <Navbar />
+                <div className='container py-16 text-center max-w-lg mx-auto'>
+                    <div className="card-premium p-10">
+                        <h2 className="text-xl font-bold mb-4 text-red-600">{error || "Property not found"}</h2>
+                        <p className="text-[#64748b] mb-6">The property you are looking for may have been removed or is temporarily unavailable.</p>
+                        <Link to="/properties" className="btn btn-primary">Browse All Listings</Link>
+                    </div>
+                </div>
             </div>
         );
     }
@@ -462,7 +474,7 @@ const PropertyDetails = () => {
                             { label: "Status", value: `For ${property.status}` },
                         ].map((detail, i) => (
                             <div key={i} className="flex justify-between gap-4 py-2 border-b border-dashed border-[#f1f5f9] min-w-0">
-                                <span className="text-text-main font-semibold capitalize text-right max-w-[60%] break-words whitespace-normal">{detail.label}</span>
+                                <span className="text-text-main font-semibold capitalize text-left max-w-[60%] break-words whitespace-normal">{detail.label}</span>
                                 <span className="text-text-main font-semibold capitalize text-right max-w-[60%] break-words whitespace-normal">{detail.value}</span>
                             </div>
                         ))}

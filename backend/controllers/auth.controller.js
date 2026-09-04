@@ -9,11 +9,20 @@ import crypto from 'crypto';
 export const register= async (req,res)=>{
     try {
         const {name,email,password,role}=req.body;
-        const userExists=await User.findOne({email});
+        if (role === "admin") {
+            return res.status(403).json({
+                message: "Direct registration as admin is not permitted",
+                success: false
+            });
+        }
+        const assignedRole = role === "seller" ? "seller" : "buyer";
+        const normalizedEmail = email?.trim().toLowerCase();
+        const userExists=await User.findOne({email: normalizedEmail});
         if(userExists)
         {
             return res.status(400).json({
-                message:"User already exists"
+                message:"User already exists",
+                success: false
             })
         }
 
@@ -22,10 +31,10 @@ export const register= async (req,res)=>{
 
         const user=await User.create({
             name,
-            email,
+            email: normalizedEmail,
             password:hashedPassword,
-            role,
-            isApproved:role==='seller'?false:true,
+            role: assignedRole,
+            isApproved:assignedRole==='seller'?false:true,
             verificationToken
         })
         try {
@@ -96,10 +105,14 @@ export const login=async(req,res)=>{
             id:user._id,
             role:user.role,
         },process.env.JWT_SECRET,{expiresIn:"7d"});
+
+        const userResponse = user.toObject();
+        delete userResponse.password;
+
         res.json({
             message:"Login successfully.",
             token,
-            user,
+            user: userResponse,
         });
     } 
     catch (err) 
@@ -117,12 +130,13 @@ export const getMe=async(req,res)=>{
         if(!user)
         {
             return res.status(404).json({
-                message:"User not found."
+                message:"User not found.",
+                success: false
             })
         }
 
         res.json({
-            success:"true",
+            success: true,
             user,
         })
     }

@@ -8,14 +8,15 @@ const PropertyCard = ({
     property,
     renderActions,
     isWishlisted,
-    onToogleWishlist
+    onToogleWishlist,
+    onToggleWishlist
 }) => {
     const { user } = useAuth();
     const navigate = useNavigate();
 
     if (!property) return null;
 
-    // to wihslist click
+    // to wishlist click
     const handleWishlistClick = (e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -23,8 +24,9 @@ const PropertyCard = ({
             navigate("/login");
             return;
         }
-        if (onToogleWishlist) {
-            onToogleWishlist(property._id);
+        const toggleFn = onToggleWishlist || onToogleWishlist;
+        if (toggleFn) {
+            toggleFn(property._id);
         }
     };
     const formattedPrice = new Intl.NumberFormat("en-IN", {
@@ -38,8 +40,8 @@ const PropertyCard = ({
 
         <div className="fade-in group flex flex-col bg-white rounded-[1.25rem] overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.05)] transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] border border-[#e2e8f0] relative w-full hover:-translate-y-2 hover:shadow-[0_12px_30px_rgba(0,0,0,0.1)] max-sm:max-w-[420px] max-sm:mx-auto">
             <Link to={`/property/${property._id}`} className="no-underline text-inherit flex flex-col w-full">
-                <div className="relative h-[220px] overflow-hidden shrink-0">
-                    <img src={property.images[0]} alt="property title" className="w-full h-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-105" />
+                <div className="relative h-[220px] overflow-hidden shrink-0 bg-slate-100">
+                    <img src={property.images?.[0] || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=800&q=80'} alt={property.title || "property image"} className="w-full h-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-105" />
                     {/* top badges */}
                     <div className="absolute top-4 left-4 right-4 flex justify-between items-center z-10">
                         <div className="flex gap-2">
@@ -134,12 +136,12 @@ const PropertyCard = ({
                                     <div className="text-[0.625rem] text-[#94a3b8] uppercase font-bold">Sq Ft</div>
                                 </div>
                             </>
-                        )};
+                        )}
                     </div>
                     {/* view detail section */}
                     {!renderActions && (
                         <div className="mt-5">
-                            <button className="btn btn-primary w-full p-3 rounded-xl font-bold text-[0.9375rem]">View Details</button>
+                            <span className="btn btn-primary w-full p-3 rounded-xl font-bold text-[0.9375rem] text-center">View Details</span>
                         </div>
                     )}
                 </div>

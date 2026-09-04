@@ -5,6 +5,14 @@ import Wishlist from "../model/wishlist.model.js";
 export const addWishlist=async(req,res)=>{
     try {
         const propertyId=req.params.propertyId;
+        const propertyExists = await Property.findById(propertyId);
+        if(!propertyExists)
+        {
+            return res.status(404).json({
+                success:false,
+                message:"Property not found"
+            });
+        }
         const existing=await Wishlist.findOne({
             user:req.user._id,
             property:propertyId
@@ -12,7 +20,7 @@ export const addWishlist=async(req,res)=>{
         if(existing)
         {
             return res.status(200).json({
-                sucess:true,
+                success:true,
                 message:"Already in wishlist"
             });
         }
@@ -39,7 +47,8 @@ export const addWishlist=async(req,res)=>{
 export const getWishlist=async(req,res)=>{
     try {
         const data=await Wishlist.find({ user:req.user._id }) .populate("property");
-        res.status(200).json(data)
+        const validData = data.filter(item => item.property != null);
+        res.status(200).json(validData)
     }
     catch (error) {
         res.status(500).json({

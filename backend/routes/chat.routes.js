@@ -1,4 +1,5 @@
 import express from "express";
+import mongoose from "mongoose";
 import Chat from "../model/chat.model.js";
 import Property from "../model/property.model.js";
 import {protect} from "../middleware/auth.middleware.js";
@@ -71,11 +72,17 @@ chatRouter.post("/start",async(req,res)=>{
 });
 
 // to send a message
-chatRouter.post("/send",async(req,res)=>{
+const handleSendMessage = async(req,res)=>{
     try {
         const{chatId,text,image,Image}=req.body;
         const messageImage = image || Image || null;
         const userId=(req.user._id || req.user.id).toString();
+        if(!chatId || !mongoose.isValidObjectId(chatId))
+        {
+            return res.status(404).json({
+                message:"Chat not found"
+            });
+        }
         const chat=await Chat.findById(chatId);
         if(!chat)
         {
@@ -100,9 +107,10 @@ chatRouter.post("/send",async(req,res)=>{
         await chat.save();
         const savedMessage = chat.messages[chat.messages.length-1];
         
-        res.json({
+        res.status(201).json({
             chat,
-            newMessage:savedMessage
+            newMessage:savedMessage,
+            message:savedMessage
         });
     } 
     catch (err) {
@@ -112,7 +120,10 @@ chatRouter.post("/send",async(req,res)=>{
             error:err.message
         })    
     }
-})
+};
+
+chatRouter.post("/send", handleSendMessage);
+chatRouter.post("/message", handleSendMessage);
 
 // to get a chat for user(all)
 chatRouter.get("/user",async(req,res)=>{
@@ -139,6 +150,12 @@ chatRouter.get("/user",async(req,res)=>{
 // to get chat messages
 chatRouter.get("/:chatId",async(req,res)=>{
     try {
+        if(!mongoose.isValidObjectId(req.params.chatId))
+        {
+            return res.status(404).json({
+                message:"Chat not found"
+            });
+        }
         const chat=await Chat.findById(req.params.chatId).populate("messages.sender","name profilePic");
         if(!chat)
         {

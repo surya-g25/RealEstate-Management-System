@@ -13,14 +13,22 @@ export const sendInquiry=async(req,res)=>{
                 message:"Property not found."
             })
         }
+        const sellerId = property.seller?._id || property.seller;
+        if (!sellerId) {
+            return res.status(400).json({
+                success: false,
+                message: "Property does not have an assigned seller."
+            });
+        }
         const inquiry=await Inquiry.create({
             property:property._id,
             buyer:req.user._id,
-            seller:property.seller._id,
+            seller:sellerId,
             message,
         });
 
         res.status(201).json({
+            success:true,
             status:true,
             message:"Inquiry sent successfully",
             inquiry,
@@ -87,12 +95,21 @@ export const markAsRead=async(req,res)=>{
                 message:"Inquiry not found",
             })
         }
+        const isRecipient = inquiry.seller?.toString() === req.user._id.toString() || req.user.role === "admin";
+        if(!isRecipient)
+        {
+            return res.status(403).json({
+                success:false,
+                message:"Not authorized to update this inquiry"
+            });
+        }
         inquiry.isRead=true;
         await inquiry.save();
         
         res.json({
             success:true,
-            messgae:"Marked as read",
+            message:"Marked as read",
+            inquiry,
         })
     }
     catch (error) {

@@ -57,9 +57,11 @@ const Wishlist = () => {
 
     if(loading)
     {
-        <div className="loader-full-page">
-            <div className="loader"></div>
-        </div>
+        return (
+            <div className="loader-full-page">
+                <div className="loader"></div>
+            </div>
+        );
     }
 
   return (
@@ -71,6 +73,7 @@ const Wishlist = () => {
                 <p className="text-text-muted">
                     Properties you've saved for later.
                 </p>
+                {error && <div className="mt-4 p-3 bg-red-100 text-red-600 rounded-lg text-sm">{error}</div>}
             </div>
             {wishlistItems.length===0 ? (
                 <div className="card-premium py-24 px-8 text-center">

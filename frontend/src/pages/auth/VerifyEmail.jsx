@@ -12,10 +12,8 @@ const VerifyEmail = () => {
     const navigate=useNavigate();
     const location=useLocation();
 
-    // to get email passed from register page
-    const emailFromState=()=>location.state?.email || "";
-    
-    const [email,setEmail]=useState(emailFromState);
+    const initialEmail = location.state?.email || "";
+    const [email, setEmail] = useState(initialEmail);
     
     //to submit the code
     const handleSubmit=async(e)=>{
@@ -30,7 +28,7 @@ const VerifyEmail = () => {
             });
             if(res.data.success)
             {
-                setSuccess("Email verifies successfully. Redirecting to login...");
+                setSuccess("Email verified successfully. Redirecting to login...");
                 setTimeout(()=>navigate("/login"),2000);
             }
 
@@ -56,13 +54,10 @@ const VerifyEmail = () => {
                 {error && (<div className="p-3 bg-red-100 text-red-600 rounded-lg mb-4 text-sm text-center">{error}</div>)}
                 {success && (<div className="p-3 bg-green-100 text-green-600 rounded-lg mb-4 text-sm text-center">{success}</div>)}
                 <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-                    {!emailFromState && (
-                        <div>
-                            <label className="block mb-2 font-medium">Email Address</label>
-                            <input type="email" value={email} onChange={(e)=>setEmail(e.target.value)} placeholder='name@company.com' required className="w-full py-3 px-4 rounded-lg border border-border outline-none focus:border-primary transition-colors"/>
-
-                        </div>
-                    )}
+                    <div>
+                        <label className="block mb-2 font-medium">Email Address</label>
+                        <input type="email" value={email} onChange={(e)=>setEmail(e.target.value)} placeholder='name@company.com' required className="w-full py-3 px-4 rounded-lg border border-border outline-none focus:border-primary transition-colors"/>
+                    </div>
                     <div>
                         <label className="block mb-2 font-medium">Verification code</label>
                         <input type='text' maxLength="6" placeholder='123123' value={code} onChange={(e)=>setCode(e.target.value)} required className="w-full py-3 px-4 rounded-lg border border-border outline-none focus:border-primary transition-colors text-center text-2xl tracking-[0.5em]"/>

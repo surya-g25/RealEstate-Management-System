@@ -8,11 +8,13 @@ adminRouter.use(protect,authorize("admin"));
 
 adminRouter.get("/users",getAllUsers);
 adminRouter.patch("/users/:id/block",blockUser);
+adminRouter.patch("/block/:id",blockUser);
 adminRouter.delete("/users/:id",deleteUser);
 adminRouter.get("/properties",getAllProperties);
 adminRouter.delete("/properties/:id",deleteProperty);
 adminRouter.get("/inquiries",getAllInquiries);
 adminRouter.get("/stats",getDashboardStats);
+adminRouter.get("/dashboard",getDashboardStats);
 adminRouter.get("/pending-sellers",getPendingSeller);
 adminRouter.patch("/approve-seller/:id",approveSeller);
 

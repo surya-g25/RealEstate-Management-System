@@ -72,7 +72,7 @@ const AdminInquiries = () => {
                                         {inq.property?.title || "Unknown property"}
                                     </div>
                                     <div className="text-xs text-text-muted">
-                                        Property ID: {inq.property?.id}
+                                        Property ID: {inq.property?._id || inq.property?.id || "N/A"}
                                     </div>
                                 </div>
                             </div>
@@ -84,13 +84,13 @@ const AdminInquiries = () => {
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 mb-6">
                             <div className="bg-[#f8fafc] p-4 md:p-5 rounded-2xl border border-[#f1f5f9]">
                                 <div className="text-xs font-bold text-text-muted uppercase mb-3 tracking-widest">Buyer detail</div>
-                                <div className="font-bold text-text-main mb-1">{inq.buyer?.name}</div>
-                                <div className="text-sm text-text-muted break-all">{inq.buyer?.email}</div>
+                                <div className="font-bold text-text-main mb-1">{inq.buyer?.name || "Deleted User"}</div>
+                                <div className="text-sm text-text-muted break-all">{inq.buyer?.email || "N/A"}</div>
                             </div>
                             <div className="bg-[#f8fafc] p-4 md:p-5 rounded-2xl border border-[#f1f5f9]">
                                 <div className="text-xs font-bold text-text-muted uppercase mb-3 tracking-widest">Seller detail</div>
-                                <div className="font-bold text-text-main mb-1">{inq.seller?.name}</div>
-                                <div className="text-sm text-text-muted break-all">{inq.seller?.email}</div>
+                                <div className="font-bold text-text-main mb-1">{inq.seller?.name || "Deleted User"}</div>
+                                <div className="text-sm text-text-muted break-all">{inq.seller?.email || "N/A"}</div>
                             </div>
                         </div>
                         <div className="bg-bg-alt p-6 rounded-2xl border-l-[4px] border-primary">

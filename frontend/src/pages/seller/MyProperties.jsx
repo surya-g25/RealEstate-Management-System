@@ -23,7 +23,7 @@ const MyProperties = () => {
             setLoading(false);
         }
         catch (err) {
-            setError("Failed to load yoru properties");
+            setError("Failed to load your properties");
             setLoading(false);
         }
     }

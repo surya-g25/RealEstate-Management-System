@@ -37,7 +37,7 @@ const Contact = () => {
             }
         } 
         catch (err) {
-            setError(err.response?.data.message || "Failed to dens message");
+            setError(err.response?.data?.message || "Failed to send message");
         }
         finally{
             setLoading(false);
@@ -80,7 +80,7 @@ const Contact = () => {
                     <div className="card-premium h-[200px] bg-primary text-white flex flex-col justify-center items-center p-8 text-center">
                         <h3 className="mb-2 font-bold text-xl">Quick Support</h3>
                         <p className="text-[0.9rem] opacity-90">
-                            Available 24/7 for our premium users. Youru satisfaction is our priority.
+                            Available 24/7 for our premium users. Your satisfaction is our priority.
                         </p>
                     </div>
                 </div>
@@ -91,7 +91,7 @@ const Contact = () => {
                             <HiOutlineCheckCircle size={64} className="text-primary mx-auto mb-6"/>
                             <h2 className="mb-4 text-2xl font-bold">Message Sent!</h2>
                             <p className="text-text-muted mb-8">
-                                Thank you for reaching out. We've recieved your message and will get back to you shortly.
+                                Thank you for reaching out. We've received your message and will get back to you shortly.
                             </p>
                             <button onClick={()=>setSuccess(false)} className="btn btn-primary py-3 px-8">
                                 Send another message.

@@ -9,7 +9,7 @@ const messageSchema=new mongoose.Schema({
     },
     text:{
         type:String,
-        required:true,
+        required:false,
     },
     image:{
         type:String,
@@ -17,17 +17,12 @@ const messageSchema=new mongoose.Schema({
     },
     createdAt:{
         type:Date,
-        default:Date.now(),
+        default:Date.now,
     }
 });
 
 const chatSchema=new mongoose.Schema({
     property:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"Property",
-        required:false,
-    },
-    Property:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"Property",
         required:false,

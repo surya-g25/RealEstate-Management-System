@@ -8,5 +8,6 @@ const userRouter=express.Router();
 userRouter.get("/profile",protect,getProfile);
 userRouter.put("/profile",protect,upload.single("profilePic"),updateProfile);
 userRouter.get("/public/:id",getPublicProfile);
+userRouter.get("/:id",getPublicProfile);
 
 export default userRouter;

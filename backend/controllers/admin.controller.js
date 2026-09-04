@@ -1,5 +1,4 @@
 import User from "../model/user.model.js";
-import Inquriry from "../model/inquiry.model.js";
 import Property from "../model/property.model.js";
 import Inquiry from "../model/inquiry.model.js";
 
@@ -24,7 +23,21 @@ export const getAllUsers=async(req,res)=>{
 // to block a particular user
 export const blockUser=async(req,res)=>{
     try {
+        if(req.user._id.toString() === req.params.id)
+        {
+            return res.status(400).json({
+                success:false,
+                message:"Administrators cannot block their own account."
+            });
+        }
         const user=await User.findById(req.params.id);
+        if(!user)
+        {
+            return res.status(404).json({
+                success:false,
+                message:"User not found."
+            });
+        }
         user.isBlocked=!user.isBlocked;
         await user.save();
 
@@ -45,7 +58,21 @@ export const blockUser=async(req,res)=>{
 // to delete a particular user
 export const deleteUser=async(req,res)=>{
     try {
-        await User.findByIdAndDelete(req.params.id);
+        if(req.user._id.toString() === req.params.id)
+        {
+            return res.status(400).json({
+                success:false,
+                message:"Administrators cannot delete their own account."
+            });
+        }
+        const user = await User.findByIdAndDelete(req.params.id);
+        if(!user)
+        {
+            return res.status(404).json({
+                success:false,
+                message:"User not found."
+            });
+        }
         res.json({
             success:true,
             message:"User deleted successfully"
@@ -83,7 +110,7 @@ export const deleteProperty=async(req,res)=>{
         await Property.findByIdAndDelete(req.params.id);
         res.json({
             success:true,
-            message:"Property deleted cuccessfully."
+            message:"Property deleted successfully."
         })
     }
     catch (error) {
@@ -167,8 +194,8 @@ export const approveSeller=async(req,res)=>{
         if(!seller || seller.role!=="seller")
         {
             return res.status(404).json({
-                succes:false,
-                message:"You are not a seller or seller not found"
+                success:false,
+                message:"Seller not found or user is not a seller"
             })
         }
 

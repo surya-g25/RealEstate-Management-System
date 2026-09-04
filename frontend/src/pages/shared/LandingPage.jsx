@@ -71,7 +71,7 @@ const LandingPage = () => {
       const res = await axios.get(`${API_URL}/api/property/counts`);
       if (res.data.success) {
         setPropertyCounts(
-          res.data.counts || {
+          res.data.counts || res.data.count || {
             flat: 0,
             villa: 0,
             penthouse: 0,

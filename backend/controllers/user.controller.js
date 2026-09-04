@@ -68,10 +68,13 @@ export const updateProfile=async(req,res)=>{
         if(phone!==undefined) user.phone=phone;
         if(address!==undefined) user.address=address;
         const updatedUser=await user.save();
+        const userResponse = updatedUser.toObject();
+        delete userResponse.password;
+
         res.json({
             success:true,
             message:"Profile updated",
-            user:updatedUser,
+            user:userResponse,
         })
         
     } 

@@ -70,7 +70,7 @@ const AdminProperties = () => {
                 ) : (
                     <div className="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-8 justify-items-center max-sm:grid-cols-1 max-sm:px-4">
                         {properties.map((p) => (
-                            <PropertyCard key={p._id} property={p} renderActions={() => {
+                            <PropertyCard key={p._id} property={p} renderActions={() => (
                                 <div className="flex-1 flex gap-2 items-center">
                                     <div className="text-[0.75rem] text-[#64748b] flex-1">
                                         <div className="font-bold">
@@ -87,7 +87,7 @@ const AdminProperties = () => {
                                         </button>
                                     </div>
                                 </div>
-                            }} />
+                            )} />
                         ))}
                     </div>
                 )}

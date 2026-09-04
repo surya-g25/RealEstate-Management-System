@@ -3,6 +3,7 @@ import Inquiry from "../model/inquiry.model.js";
 import {uploadToCloudinary} from "../utils/uploadToCloudinary.js";
 import cloudinary from "../config/cloudinary.js";
 import jwt from "jsonwebtoken";
+import mongoose from "mongoose";
 
 // add a property
 export const addProperty=async(req,res)=>{
@@ -45,7 +46,7 @@ export const addProperty=async(req,res)=>{
           : [],
         });
 
-        res.json({
+        res.status(201).json({
             success:true,
             property,
         })
@@ -178,10 +179,18 @@ export const deleteProperty=async(req,res)=>{
             })
         }
         //delete images from cloudinary
-        for(let imageUrl of property.images)
-        {
-            const publicId=imageUrl.spilt("/").pop().split(".")[0];
-            await cloudinary.uploader.destroy("properties/"+publicId);
+        if (Array.isArray(property.images)) {
+            for(let imageUrl of property.images)
+            {
+                try {
+                    if (imageUrl && typeof imageUrl === "string" && imageUrl.includes("/")) {
+                        const publicId=imageUrl.split("/").pop().split(".")[0];
+                        await cloudinary.uploader.destroy("properties/"+publicId);
+                    }
+                } catch (cErr) {
+                    console.error("Cloudinary cleanup error:", cErr.message);
+                }
+            }
         }
 
         await property.deleteOne();
@@ -217,6 +226,14 @@ export const updatePropertyStatus=async (req,res)=>{
                 success:false,
                 message:"Not authorized",
             })
+        }
+
+        if (!req.body.status || !["sale", "sold"].includes(req.body.status))
+        {
+            return res.status(400).json({
+                success:false,
+                message:"Status must be either 'sale' or 'sold'"
+            });
         }
 
         property.status=req.body.status;
@@ -320,6 +337,13 @@ export const getAllProperties = async (req, res) => {
 // to get property details
 export const getPropertyDetails=async(req,res)=>{
     try {
+        if(!mongoose.isValidObjectId(req.params.id))
+        {
+            return res.status(404).json({
+                success:false,
+                message:"Property not found",
+            })
+        }
         const property=await Property.findById(req.params.id).populate(
             "seller",
             "name email phone profilePic"
@@ -346,10 +370,11 @@ export const getPropertyDetails=async(req,res)=>{
                 //ignore    
             }
         } 
-        const isSellerChecking = visitedId===property.seller._id.toString();
-        if(!isSellerChecking && !property.viewedBy.includes(visitedId))
+        const isSellerChecking = property.seller?._id ? visitedId===property.seller._id.toString() : false;
+        if(!isSellerChecking && (!property.viewedBy || !property.viewedBy.includes(visitedId)))
         {
-            property.views+1;
+            property.views = (property.views || 0) + 1;
+            if (!property.viewedBy) property.viewedBy = [];
             property.viewedBy.push(visitedId);
             await property.save();
         }
@@ -435,6 +460,7 @@ export const getPropertyCounts=async(req,res)=>{
         res.json({
             success:true,
             count:formattedCounts,
+            counts:formattedCounts,
         });
     } 
     catch (error) {

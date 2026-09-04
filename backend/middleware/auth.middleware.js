@@ -21,8 +21,14 @@
         }
         const decoded=jwt.verify(token,process.env.JWT_SECRET);
         req.user=await User.findById(decoded.id).select("-password");
-        // console.log(req.user);
-        if(req.user&&req.user.isBlocked)
+        if(!req.user)
+        {
+            return res.status(401).json({
+                message:"User account no longer exists",
+                success:false,
+            });
+        }
+        if(req.user.isBlocked)
         {
             return res.status(403).json({
                 message:"Your account has been blocked by admin.",
@@ -43,7 +49,7 @@
  // role based authentication
 export const authorize=(...roles)=>{
     return (req,res,next)=>{
-        if(!roles.includes(req.user.role))
+        if(!req.user || !roles.includes(req.user.role))
         {
             return res.status(403).json({
                 message:"Access denied.You don't have permission.",

@@ -271,7 +271,7 @@ const AddProperty = () => {
                                 {images.length < 10 && (
                                     <div className="aspect-square border-2 border-dashed border-[#cbd5e1] rounded-xl flex flex-col items-center justify-center cursor-pointer relative bg-[#f8fafc] transition-colors hover:border-primary">
                                         <input type='file' multiple onChange={handleImageChange}
-                                            className='absolute inset-0 opacity-0 cursor-pointer' accept='images/*'
+                                            className='absolute inset-0 opacity-0 cursor-pointer' accept='image/*'
                                         />
                                         <HiUpload size={20} color='#64748b' />
                                         <span className="text-xs font-bold text-[#64748b] mt-1.5">Add More</span>

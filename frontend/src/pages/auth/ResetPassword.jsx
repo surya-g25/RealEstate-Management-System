@@ -111,7 +111,7 @@ const ResetPassword = () => {
               </div>
             </div>
             <button className="btn btn-primary p-3.5 text-base mt-2" type='submit' disabled={isLoading}>
-              {isLoading ? "Resetting..." : "Rest Password"}
+              {isLoading ? "Resetting..." : "Reset Password"}
             </button>
           </form>
           <p className="text-center mt-8 text-text-muted">

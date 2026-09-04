@@ -9,7 +9,7 @@ export const createContact=async(req,res)=>{
             name,
             email,
             phone,
-            role,
+            role: role || "buyer",
             message,
         });
         
@@ -31,11 +31,13 @@ export const createContact=async(req,res)=>{
             </div>`;
 
         try {
-            await sendEmail({
-                emain:adminEmail,
-                subject:`New contact message from ${name}`,
-                message:adminMessage,
-            })
+            if (adminEmail) {
+                await sendEmail({
+                    email:adminEmail,
+                    subject:`New contact message from ${name}`,
+                    message:adminMessage,
+                })
+            }
         } catch (emailError) {
             console.log("Admin notification email failed : ",emailError.message);
         }
@@ -46,7 +48,7 @@ export const createContact=async(req,res)=>{
     } catch (err) {
         console.log("Contact error : ",err);
         res.status(500).json({
-            sucess:false,
+            success:false,
             message:err.message || "Failed to send message."
         })
     }

@@ -25,19 +25,25 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         if (token) {
-            const storedUser = localStorage.getItem("user") || sessionStorage.getItem("user");
-            if (storedUser) {
-                setUser(JSON.parse(storedUser));
+            try {
+                const storedUser = localStorage.getItem("user") || sessionStorage.getItem("user");
+                if (storedUser) {
+                    setUser(JSON.parse(storedUser));
+                }
+            } catch (e) {
+                console.error("Failed to parse stored user:", e);
             }
         }
         setLoading(false);
         const interceptor = axios.interceptors.response.use(
             (response) => response,
             (error) => {
+                const errorMsg = error.response?.data?.message;
                 if (
                     error.response &&
                     error.response.status === 403 &&
-                    error.response.data.message.includes("blocked")
+                    typeof errorMsg === "string" &&
+                    errorMsg.includes("blocked")
                 ) {
                     logout();
                 }

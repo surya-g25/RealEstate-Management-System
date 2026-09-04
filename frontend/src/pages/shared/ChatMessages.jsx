@@ -125,7 +125,7 @@ const ChatMessages = () => {
     useEffect(()=>{
         if(activeChat)
         {
-            const timer=setTimeout(()=>scrollToBottom,100);
+            const timer=setTimeout(()=>scrollToBottom(),100);
             return ()=>clearTimeout(timer);
         }
     },[activeChat]);
@@ -224,7 +224,10 @@ const ChatMessages = () => {
 
     // to get the partner
     const getChatPartner=(chat)=>{
-        return user._id===chat.buyer._id ? chat.seller : chat.buyer;
+        if(!chat) return null;
+        const myId = user?._id?.toString();
+        const buyerId = (chat.buyer?._id || chat.buyer)?.toString();
+        return myId === buyerId ? chat.seller : chat.buyer;
     }
 
     if(loading)
