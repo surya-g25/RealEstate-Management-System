@@ -1,10 +1,8 @@
-import React from 'react'
+import { useState, useEffect } from 'react'
 import { useAuth } from '../../context/AuthContext'
 import API_URL from '../../config'
 import axios from 'axios'
 import { useNavigate, useParams } from 'react-router-dom'
-import { useState } from 'react'
-import { useEffect } from 'react'
 import { HiUpload, HiX } from 'react-icons/hi'
 
 const EditProperty = () => {
@@ -51,8 +49,28 @@ const EditProperty = () => {
     useEffect(() => {
         const fetchProperty = async () => {
             try {
-                const res = await axios.get(`${API_URL}/api/property/${id}`);
+                const res = await axios.get(`${API_URL}/api/property/${id}`, {
+                    headers: token ? { Authorization: `Bearer ${token}` } : {}
+                });
                 const p = res.data.property;
+                if (!p) {
+                    setError("Property not found");
+                    setLoading(false);
+                    return;
+                }
+
+                let parsedAmenities = [];
+                if (Array.isArray(p.amenities)) {
+                    parsedAmenities = p.amenities;
+                } else if (typeof p.amenities === 'string') {
+                    try {
+                        const parsed = JSON.parse(p.amenities);
+                        parsedAmenities = Array.isArray(parsed) ? parsed : [parsed];
+                    } catch {
+                        parsedAmenities = p.amenities.split(',').map((a) => a.trim()).filter(Boolean);
+                    }
+                }
+
                 setFormData({
                     title: p.title || "",
                     description: p.description || "",
@@ -66,20 +84,21 @@ const EditProperty = () => {
                     areaSize: p.areaSize || "",
                     furnishing: p.furnishing || "unfurnished",
                     status: p.status || "sale",
-                    amenities: p.amenities || [],
+                    amenities: parsedAmenities,
                     securityDeposit: p.securityDeposit || "",
                     maintenance: p.maintenance || "",
                 });
-                setExistingImages(p.newImages || []);
+                setExistingImages(p.images || []);
                 setLoading(false);
             }
             catch (err) {
+                console.error("Failed to load property details:", err);
                 setError("Failed to load property details");
                 setLoading(false);
             }
         }
         fetchProperty();
-    }, [id]);
+    }, [id, token]);
 
     const handleInputChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -87,7 +106,7 @@ const EditProperty = () => {
 
     const handleAmenityChange = (amenity) => {
         setFormData((prev) => {
-            const current = prev.amenities || [];
+            const current = Array.isArray(prev.amenities) ? prev.amenities : [];
             if (current.includes(amenity)) {
                 return { ...prev, amenities: current.filter((a) => a !== amenity) };
             } else {
@@ -153,9 +172,11 @@ const EditProperty = () => {
     }
 
     if (loading) {
-        <div className='loader-full-page'>
-            <div className='loader'></div>
-        </div>
+        return (
+            <div className='loader-full-page'>
+                <div className='loader'></div>
+            </div>
+        );
     }
 
     return (
@@ -353,17 +374,20 @@ const EditProperty = () => {
                             <h3 className="text-xl font-extrabold text-text-main">Amenities</h3>
                         </div>
                         <div className="grid grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-4">
-                            {commonAmenities.map((amenity) => (
-                                <label key={amenity}
-                                    className={`flex items-center gap-3 cursor-pointer p-3 rounded-xl border transition-all duration-200 ${formData.amenities.includes(amenity) ? 'bg-primary-light border-primary' : 'bg-[#f8fafc] border-[#e2e8f0]'}`}
-                                >
-                                    <input type="checkbox" checked={formData.amenities.includes(amenity)}
-                                        onChange={() => handleAmenityChange(amenity)} className="accent-primary w-4 h-4" />
-                                    <span className={`text-sm font-semibold ${formData.amenities.includes(amenity) ? 'text-primary' : 'text-text-main'}`}>
-                                        {amenity}
-                                    </span>
-                                </label>
-                            ))}
+                            {commonAmenities.map((amenity) => {
+                                const isSelected = Array.isArray(formData.amenities) && formData.amenities.includes(amenity);
+                                return (
+                                    <label key={amenity}
+                                        className={`flex items-center gap-3 cursor-pointer p-3 rounded-xl border transition-all duration-200 ${isSelected ? 'bg-primary-light border-primary' : 'bg-[#f8fafc] border-[#e2e8f0]'}`}
+                                    >
+                                        <input type="checkbox" checked={isSelected}
+                                            onChange={() => handleAmenityChange(amenity)} className="accent-primary w-4 h-4" />
+                                        <span className={`text-sm font-semibold ${isSelected ? 'text-primary' : 'text-text-main'}`}>
+                                            {amenity}
+                                        </span>
+                                    </label>
+                                );
+                            })}
                         </div>
                     </div>
                     {/* Section 5: Image Management */}
@@ -375,19 +399,22 @@ const EditProperty = () => {
 
                         <div className="grid grid-cols-[repeat(auto-fill,minmax(100px,1fr))] gap-4">
                             {/* Existing Images */}
-                            {existingImages.map((src, i) => (
-                                <div key={`existing-${i}`} className="relative aspect-square rounded-xl overflow-hidden border-2 border-[#f1f5f9]">
-                                    <img src={src} alt="Existing" className="w-full h-full object-cover" />
-                                    <button
-                                        type="button"
-                                        onClick={() => removeExistingImage(src)}
-                                        className="absolute top-1 right-1 bg-[#dc2626] text-white border-none rounded-full w-5 h-5 flex items-center justify-center cursor-pointer z-10"
-                                    >
-                                        <HiX size={12} />
-                                    </button>
-                                    <div className="absolute bottom-0 left-0 right-0 bg-primary text-white text-[0.6rem] text-center py-0.5 font-bold tracking-widest">EXISTING</div>
-                                </div>
-                            ))}
+                            {existingImages.map((src, i) => {
+                                const imgSrc = typeof src === 'string' ? src : src?.url || src?.secure_url || '';
+                                return (
+                                    <div key={`existing-${i}`} className="relative aspect-square rounded-xl overflow-hidden border-2 border-[#f1f5f9]">
+                                        <img src={imgSrc} alt="Existing" className="w-full h-full object-cover" />
+                                        <button
+                                            type="button"
+                                            onClick={() => removeExistingImage(src)}
+                                            className="absolute top-1 right-1 bg-[#dc2626] text-white border-none rounded-full w-5 h-5 flex items-center justify-center cursor-pointer z-10"
+                                        >
+                                            <HiX size={12} />
+                                        </button>
+                                        <div className="absolute bottom-0 left-0 right-0 bg-primary text-white text-[0.6rem] text-center py-0.5 font-bold tracking-widest">EXISTING</div>
+                                    </div>
+                                );
+                            })}
 
                             {/* New Image Previews */}
                             {newImagePreviews.map((src, i) => (

@@ -1,4 +1,3 @@
-import React from 'react'
 import { useAuth } from '../../context/AuthContext'
 import { useChat } from '../../context/ChatContext'
 import { useLocation } from 'react-router-dom'
@@ -68,7 +67,6 @@ const ChatMessages = () => {
                         headers:{Authorization:`Bearer ${token}`}
                     });
                     setMessages(res.data.messages || []);
-                    joinChat(activeChat._id);
                     scrollToBottom();
                 } 
                 catch (err) {
@@ -79,19 +77,46 @@ const ChatMessages = () => {
         }
     },[activeChat]);
 
+    // ensure socket joins the chat room whenever socket or activeChat changes
+    useEffect(()=>{
+        if(socket && activeChat?._id)
+        {
+            joinChat(activeChat._id);
+        }
+    },[socket, activeChat?._id]);
+
     // updating the chat when the new message is recieved
     useEffect(()=>{
         if(socket)
         {
-            socket.on("receiveMessage",(data)=>{
-                if(activeChat && data.chatId===activeChat._id)
+            const handleIncoming = (data) => {
+                if(activeChat && data.chatId === activeChat._id)
                 {
-                    setMessages((prev)=>[...prev,data]);
+                    setMessages((prev) => {
+                        if (data._id && prev.some((m) => m._id === data._id)) {
+                            return prev;
+                        }
+                        return [...prev, data];
+                    });
                 }
-            });
+                setConversations((prev) =>
+                    prev.map((c) => {
+                        if (c._id === data.chatId) {
+                            const updatedMessages = Array.isArray(c.messages) ? [...c.messages, data] : [data];
+                            return { ...c, messages: updatedMessages };
+                        }
+                        return c;
+                    })
+                );
+            };
+
+            socket.on("receiveMessage", handleIncoming);
+
+            return () => {
+                socket.off("receiveMessage", handleIncoming);
+            };
         }
-        return ()=>socket?.off("receiveMessage");
-    },[socket,activeChat]);
+    },[socket, activeChat]);
 
     useEffect(()=>{
         scrollToBottom();
@@ -127,13 +152,29 @@ const ChatMessages = () => {
             );
             if(res.data.newMessage)
             {
+                const savedMsg = res.data.newMessage;
+                // Instantly show sent message in active view
+                setMessages((prev) => {
+                    if (prev.some((m) => m._id === savedMsg._id)) return prev;
+                    return [...prev, savedMsg];
+                });
+                setConversations((prev) =>
+                    prev.map((c) => {
+                        if (c._id === activeChat._id) {
+                            const updatedMessages = Array.isArray(c.messages) ? [...c.messages, savedMsg] : [savedMsg];
+                            return { ...c, messages: updatedMessages };
+                        }
+                        return c;
+                    })
+                );
+
                 sendMessage(
                     activeChat._id,
                     textToSend,
-                    res.data.newMessage._id,
-                    res.data.newMessage.createdAt,
+                    savedMsg._id,
+                    savedMsg.createdAt,
+                    savedMsg.image
                 );
-
             }   
             scrollToBottom(); 
         } 

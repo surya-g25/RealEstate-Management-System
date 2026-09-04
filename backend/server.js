@@ -41,6 +41,7 @@ app.use("/api/auth",authRouter);
 app.use("/api/user",userRouter); 
 app.use("/api/property",propertyRouter);
 app.use("/api/inquiry",inquiryRouter);
+app.use("/api/inquiries",inquiryRouter);
 app.use("/api/wishlist",wishlistRouter);
 app.use("/api/contact",contactRouter);
 app.use("/api/admin",adminRouter);
@@ -60,7 +61,7 @@ io.on("connection",(socket)=>{
         socket.join(chatId);
     });
     socket.on("sendMessage",(data)=>{
-        io.to(data.chatId).emit("recieveMessage",data);
+        io.to(data.chatId).emit("receiveMessage",data);
     });
     socket.on("disconnect",()=>{
         // do nothing

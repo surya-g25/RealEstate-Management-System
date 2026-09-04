@@ -1,5 +1,6 @@
 import express from "express";
 import Chat from "../model/chat.model.js";
+import Property from "../model/property.model.js";
 import {protect} from "../middleware/auth.middleware.js";
 
 const chatRouter=express.Router();
@@ -9,7 +10,7 @@ chatRouter.use(protect);
 // to create a chat
 chatRouter.post("/start",async(req,res)=>{
     try {
-        const {propertyId,sellerId,buyerId:providedBuyerId}=req.body;
+        let {propertyId,sellerId,buyerId:providedBuyerId}=req.body;
         let buyerId,finalSellerId;
         if(req.user.role==="seller")
         {
@@ -19,11 +20,22 @@ chatRouter.post("/start",async(req,res)=>{
         else
         {
             buyerId=req.user._id;
-            finalSellerIdd=sellerId;
+            finalSellerId=sellerId;
         }
+
+        // If sellerId wasn't passed directly, resolve seller from property
+        if(!finalSellerId && propertyId)
+        {
+            const property = await Property.findById(propertyId);
+            if(property && property.seller)
+            {
+                finalSellerId = property.seller;
+            }
+        }
+
         if(!buyerId || !finalSellerId)
         {
-            return res.status(404).json({
+            return res.status(400).json({
                 message:"Missing buyer or seller id"
             });
         }
@@ -36,6 +48,7 @@ chatRouter.post("/start",async(req,res)=>{
         {
             chat=await Chat.create({
                 property:propertyId,
+                Property:propertyId,
                 buyer:buyerId,
                 seller:finalSellerId,
                 messages:[],
@@ -49,9 +62,10 @@ chatRouter.post("/start",async(req,res)=>{
 
     } 
     catch (err) {
+        console.error("Error creating chat:", err);
         return res.status(500).json({
             message:"Error creating the chat or getting the previous one",
-            error:error.message
+            error:err.message
         });    
     }
 });
@@ -59,8 +73,9 @@ chatRouter.post("/start",async(req,res)=>{
 // to send a message
 chatRouter.post("/send",async(req,res)=>{
     try {
-        const{chatId,text,Image}=req.body;
-        const userId=req.user.id;
+        const{chatId,text,image,Image}=req.body;
+        const messageImage = image || Image || null;
+        const userId=(req.user._id || req.user.id).toString();
         const chat=await Chat.findById(chatId);
         if(!chat)
         {
@@ -78,7 +93,7 @@ chatRouter.post("/send",async(req,res)=>{
         const newMessage={
             sender:userId,
             text,
-            image,
+            image:messageImage,
             createdAt:new Date(),
         }
         chat.messages.push(newMessage);
@@ -91,6 +106,7 @@ chatRouter.post("/send",async(req,res)=>{
         });
     } 
     catch (err) {
+        console.error("Error sending message:", err);
         res.status(500).json({
             message:"Error sending message",
             error:err.message

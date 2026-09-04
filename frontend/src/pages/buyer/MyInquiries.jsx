@@ -1,11 +1,9 @@
-import React from 'react'
+import { useState, useEffect } from 'react'
 import Navbar from '../../components/common/Navbar'
 import { useAuth } from '../../context/AuthContext'
 import API_URL from '../../config'
 import axios from 'axios'
-import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { useEffect } from 'react'
 import { HiCalendar, HiChatAlt2, HiCheckCircle, HiExternalLink, HiHome, HiMail, HiOutlineChatAlt2, HiPhone, HiUser } from 'react-icons/hi'
 
 const MyInquiries = () => {
@@ -13,6 +11,7 @@ const MyInquiries = () => {
   const [inquiries, setInquiries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [markingReadId, setMarkingReadId] = useState(null);
   const navigate = useNavigate();
 
   // to fetch the inquiry coming from server side
@@ -29,7 +28,7 @@ const MyInquiries = () => {
       }
       catch (err) {
         console.error("Error fetching inquiries:", err);
-        setError(err.respons?.data?.message || "Failed to load inquiries");
+        setError(err.response?.data?.message || "Failed to load inquiries");
         setLoading(false);
       }
     };
@@ -39,33 +38,47 @@ const MyInquiries = () => {
   // to mark as read for the inquiry for seller
   const markAsRead = async (id) => {
     try {
-      await axios.patch(`${API_URL}/api/inquiries/${id}/read`, {}, {
+      setMarkingReadId(id);
+      await axios.patch(`${API_URL}/api/inquiry/${id}/read`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      setInquiries(inquiries.map((inq) =>
-        inq._id === id ? { ...inq, isRead: true } : inq
-      ));
+      setInquiries((prev) =>
+        prev.map((inq) =>
+          inq._id === id ? { ...inq, isRead: true } : inq
+        )
+      );
     }
     catch (err) {
-      console.error("Failed to mark as read");
+      console.error("Failed to mark as read:", err);
+    }
+    finally {
+      setMarkingReadId(null);
     }
   }
 
   const handleStartChat = async (inq) => {
     try {
+      const isSeller = user?.role === 'seller';
+      const sellerId = isSeller 
+        ? user?._id 
+        : (inq.seller?._id || inq.seller || inq.property?.seller?._id || inq.property?.seller);
+      const buyerId = isSeller 
+        ? (inq.buyer?._id || inq.buyer) 
+        : user?._id;
+
       const res = await axios.post(`${API_URL}/api/chat/start`, {
-        propertyId: inq.property?._id,
-        buyerId: inq.buyer?._id
+        propertyId: inq.property?._id || inq.property,
+        buyerId,
+        sellerId
       }, {
         headers: { Authorization: `Bearer ${token}` }
-      }
-      );
+      });
 
       navigate("/chat-messages", { state: { chat: res.data } });
     }
     catch (err) {
       console.error("Error starting the chat :", err);
-      alert("Failed to start chat please try again");
+      alert(err.response?.data?.message || "Failed to start chat please try again");
     }
   };
 
@@ -177,15 +190,17 @@ const MyInquiries = () => {
                     View property <HiExternalLink />
                   </Link>
                   {isSeller && !inq.isRead && (
-                    <button onClick={() => markAsRead(inq._id)} className="btn btn-primary py-2.5 px-4 md:py-3 w-full justify-center text-sm">
-                      Mark as Read
+                    <button 
+                      onClick={() => markAsRead(inq._id)} 
+                      disabled={markingReadId === inq._id}
+                      className="btn btn-primary py-2.5 px-4 md:py-3 w-full justify-center text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {markingReadId === inq._id ? "Marking..." : "Mark as Read"}
                     </button>
                   )}
-                  {isSeller && (
-                    <button onClick={() => handleStartChat(inq)} className="btn py-2.5 px-4 md:py-3 w-full justify-center bg-[#2563eb] text-white hover:bg-[#1d4ed8] flex items-center gap-2 text-sm rounded-xl font-semibold shadow-sm">
-                      <HiChatAlt2 /> Message
-                    </button>
-                  )}
+                  <button onClick={() => handleStartChat(inq)} className="btn py-2.5 px-4 md:py-3 w-full justify-center bg-[#2563eb] text-white hover:bg-[#1d4ed8] flex items-center gap-2 text-sm rounded-xl font-semibold shadow-sm">
+                    <HiChatAlt2 /> Message
+                  </button>
                 </div>
               </div>
             ))}

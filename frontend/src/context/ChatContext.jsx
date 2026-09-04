@@ -1,10 +1,6 @@
-import React,{createContext} from "react";
+import { createContext, useState, useRef, useEffect, useContext } from "react";
 import { useAuth } from "./AuthContext";
-import { useState } from "react";
-import { useRef } from "react";
-import { useEffect } from "react";
-import {io} from 'socket.io-client'
-import { useContext } from "react";
+import { io } from 'socket.io-client';
 import API_URL from "../config";
 
 
@@ -32,19 +28,29 @@ export const ChatProvider=({children})=>{
             const newSocket=io(API_URL);
             setSocket(newSocket);
 
-            newSocket.on("recieveMessage",(data)=>{
+            newSocket.on("connect", () => {
+                if(activeChatRef.current?._id)
+                {
+                    newSocket.emit("joinChat", activeChatRef.current._id);
+                }
+            });
+
+            const handleIncomingNotification = (data) => {
                 if(activeChatRef.current?._id!==data.chatId)
                 {
                     setNotifications((prev)=>[...prev,data]);
                 }
-            });
+            };
+
+            newSocket.on("receiveMessage", handleIncomingNotification);
+
             return ()=>newSocket.close();
         }
     },[user]);
 
     // to join a chat
     const joinChat=(chatId)=>{
-        if(socket)
+        if(socket && chatId)
         {
             socket.emit("joinChat",chatId);
         }

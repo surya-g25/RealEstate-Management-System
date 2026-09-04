@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import moongoose, { mongo } from "mongoose";
 import Property from "./property.model.js";
 
 const messageSchema=new mongoose.Schema({
@@ -23,6 +22,11 @@ const messageSchema=new mongoose.Schema({
 });
 
 const chatSchema=new mongoose.Schema({
+    property:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"Property",
+        required:false,
+    },
     Property:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"Property",
