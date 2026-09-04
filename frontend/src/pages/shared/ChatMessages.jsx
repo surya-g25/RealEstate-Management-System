@@ -1,5 +1,4 @@
 import React from 'react'
-import { chatMessagesStyles as s } from '../../assets/dummyStyles'
 import { useAuth } from '../../context/AuthContext'
 import { useChat } from '../../context/ChatContext'
 import { useLocation } from 'react-router-dom'
@@ -190,48 +189,48 @@ const ChatMessages = () => {
     if(loading)
     {
         return (
-            <div className={s.loaderFullPage}>
-                <div className={s.loader}></div>
+            <div className="loader-full-page">
+                <div className="loader"></div>
             </div>
         );
     }
 
     return (
-        <div className={`${s.chatContainer} ${user?.role==='seller'?s.chatContainerSeller:s.chatContainerNonSeller}`}>
+        <div className={`flex flex-col overflow-hidden ${user?.role==='seller' ? 'h-[calc(100vh-120px)]' : 'h-screen md:h-screen pt-32 max-lg:pt-28'}`}>
             {user?.role !== 'seller' && <Navbar/>}
-            <div className={s.chatWrapper}>
-                <div className={`${s.sidebar} ${activeChat ? s.sidebarHidden : ""}`}>
-                    <div className={s.sidebarHeader}>
-                        <h2 className={s.sidebarTitle}>Messages</h2>
+            <div className="flex flex-1 bg-[#f8fafc] font-sans relative overflow-hidden mt-0 md:mt-0">
+                <div className={`w-full absolute inset-0 z-10 transition-transform duration-300 lg:relative lg:w-[350px] shrink-0 bg-white border-r border-[#e2e8f0] flex flex-col lg:translate-x-0 ${activeChat ? "-translate-x-full lg:-translate-x-0 hidden lg:flex" : ""}`}>
+                    <div className="p-5 border-b border-[#f1f5f9]">
+                        <h2 className="m-0 text-xl font-bold text-[#1e293b]">Messages</h2>
                     </div>
-                    <div className={s.sidebarContent}>
+                    <div className="flex-1 overflow-y-auto">
                         {conversations.length===0 ? (
-                            <div className={s.emptyConversations}>
-                                <HiOutlineChatAlt2 className={s.emptyIcon}/>
+                            <div className="flex-1 flex flex-col items-center justify-center text-[#94a3b8] text-center p-10">
+                                <HiOutlineChatAlt2 className="w-20 h-20 mb-5 opacity-50"/>
                                 <p>No conversations yet</p>
                             </div>
                         ):(
                             conversations.map((chat)=>(
-                                <div key={chat._id} className={`${s.conversationItem} 
-                                ${activeChat?._id === chat._id ? s.conversationItemActive : ""}`}
+                                <div key={chat._id} className={`p-[15px_20px] flex items-center gap-3 cursor-pointer transition-colors duration-200 border-b border-[#f8fafc] hover:bg-[#f1f5f9] group 
+                                ${activeChat?._id === chat._id ? "bg-[#f0f9ff] border-r-[3px] border-r-[#00b4d8]" : ""}`}
                                 onClick={()=>setActiveChat(chat)}
                                 >
-                                    <div className={s.avatar}>
+                                    <div className="w-9 h-9 md:w-12 md:h-12 rounded-full bg-[#00b4d8] text-white flex items-center justify-center font-bold text-[0.9rem] md:text-base overflow-hidden">
                                         {getChatPartner(chat)?.profilePic ? (
-                                            <img src={getChatPartner(chat).profilePic} className={s.avatarImg} alt=''/>
+                                            <img src={getChatPartner(chat).profilePic} className="w-full h-full object-cover" alt=''/>
                                         ):(
                                             getChatPartner(chat)?.name?.charAt(0)
                                         )}
                                     </div>
-                                    <div className={s.conversationInfo}>
-                                        <div className={s.conversationName}>
+                                    <div className="flex-1 min-w-0">
+                                        <div className="font-semibold text-[#1e293b] mb-1 whitespace-nowrap overflow-hidden text-ellipsis">
                                             {getChatPartner(chat)?.name}
                                         </div>
-                                        <div className={s.conversationPreview}>
+                                        <div className="text-[0.85rem] text-[#64748b] whitespace-nowrap overflow-hidden text-ellipsis">
                                             {chat.messages.at(-1)?.text || "Started a conversation"}
                                         </div>
                                     </div>
-                                    <button onClick={(e)=>handleDeleteChat(e,chat._id)} className={s.deleteChatButton} title='Delete Conversation'>
+                                    <button onClick={(e)=>handleDeleteChat(e,chat._id)} className="bg-transparent border-none text-[#94a3b8] p-2 rounded-lg cursor-pointer opacity-100 md:opacity-0 transition-all duration-200 flex items-center justify-center hover:text-red-500 hover:bg-red-100 md:group-hover:opacity-100" title='Delete Conversation'>
                                         <HiOutlineTrash/>
                                     </button>
                                 </div>
@@ -241,21 +240,21 @@ const ChatMessages = () => {
                 </div>
                 {/* main chat area */}
 
-                <div className={s.chatArea}>
+                <div className="absolute inset-0 z-[5] lg:relative lg:flex-1 lg:z-auto flex flex-col bg-white w-full">
                 {activeChat ? (
                     <>
-                    <div className={s.chatHeader}>
-                        <div className={s.chatHeaderLeft}>
+                    <div className="p-[10px_15px] md:p-[15px_25px] bg-white sticky md:relative top-0 z-20 border-b border-[#e2e8f0] flex items-center justify-between">
+                        <div className="flex items-center gap-3">
                         <button
-                            className={s.backButton}
+                            className="flex lg:hidden mr-2.5 bg-[#f1f5f9] border-none p-1.5 rounded-full text-[#1e293b]"
                             onClick={() => setActiveChat(null)}
                         >
                             <HiChevronLeft size={24} />
                         </button>
-                        <div className={s.avatar}>
+                        <div className="w-9 h-9 md:w-12 md:h-12 rounded-full bg-[#00b4d8] text-white flex items-center justify-center font-bold text-[0.9rem] md:text-base overflow-hidden">
                             {getChatPartner(activeChat)?.profilePic ? (
                             <img
-                                className={s.avatarImg}
+                                className="w-full h-full object-cover"
                                 src={getChatPartner(activeChat).profilePic}
                                 alt=""
                             />
@@ -263,32 +262,32 @@ const ChatMessages = () => {
                             getChatPartner(activeChat)?.name?.charAt(0)
                             )}
                         </div>
-                        <div className={s.chatPartnerName}>
+                        <div className="font-bold text-[#1e293b]">
                             {getChatPartner(activeChat)?.name}
                         </div>
                         </div>
                     </div>
 
-                    <div className={s.messagesArea}>
+                    <div className="p-[15px] pb-[80px] md:p-[25px] md:pb-[25px] overflow-y-auto flex-1 flex flex-col gap-[15px] bg-[#f8fafc]">
                         {messages.map((msg, idx) => (
                         <div
                             key={idx}
-                            className={`${s.messageBubble} ${(msg.sender?._id || msg.sender) === user._id ? s.messageOwn : s.messageOther}`}
+                            className={`max-w-[85%] md:max-w-[70%] p-[12px_18px] rounded-[20px] text-[0.95rem] leading-[1.5] relative ${(msg.sender?._id || msg.sender) === user._id ? "self-end bg-[#00b4d8] text-white rounded-br-[4px] shadow-[0_4px_12px_rgba(0,180,216,0.2)]" : "self-start bg-white text-[#334155] rounded-bl-[4px] shadow-[0_4px_12px_rgba(0,0,0,0.05)]"}`}
                         >
-                            <div className={s.messageContent}>
+                            <div className="flex items-start gap-2 break-all">
                             {msg.image && (
-                                <div className={s.messageImageWrapper}>
+                                <div className="mb-2 rounded-lg overflow-hidden">
                                 <img
                                     src={msg.image}
                                     alt="Property Reference"
-                                    className={s.messageImage}
+                                    className="w-full max-h-[200px] object-cover block"
                                 />
                                 </div>
                             )}
-                            <div className={s.messageText}>{msg.text}</div>
+                            <div className="break-all">{msg.text}</div>
                             {(msg.sender?._id || msg.sender) === user._id && (
                                 <button
-                                className={s.deleteMessageButton}
+                                className="bg-transparent border-none text-white/60 cursor-pointer p-0.5 rounded transition-all duration-200 mt-0.5 hover:text-white hover:bg-white/20"
                                 onClick={() =>
                                     handleDeleteMessage(activeChat._id, msg._id)
                                 }
@@ -298,7 +297,7 @@ const ChatMessages = () => {
                                 </button>
                             )}
                             </div>
-                            <span className={s.messageTime}>
+                            <span className="text-[0.75rem] mt-1.5 opacity-70 block">
                             {new Date(msg.createdAt).toLocaleTimeString([], {
                                 hour: "2-digit",
                                 minute: "2-digit",
@@ -309,23 +308,23 @@ const ChatMessages = () => {
                         <div ref={messagesEndRef} />
                     </div>
 
-                    <form className={s.messageForm} onSubmit={handleSendMessage}>
+                    <form className="p-[12px_15px] md:p-[20px_25px] bg-white sticky md:relative bottom-0 border-t border-[#e2e8f0] flex gap-[15px] items-center" onSubmit={handleSendMessage}>
                         <input
                         type="text"
-                        className={s.messageInput}
+                        className="flex-1 min-w-0 border border-[#e2e8f0] rounded-[30px] p-[12px_25px] outline-none text-[0.95rem] transition-colors duration-200 focus:border-[#00b4d8]"
                         placeholder="Type a message..."
                         value={newMessage}
                         onChange={(e) => setNewMessage(e.target.value)}
                         />
-                        <button type="submit" className={s.sendButton}>
-                        <HiPaperAirplane className={s.sendIcon} />
+                        <button type="submit" className="bg-[#00b4d8] text-white border-none w-[45px] h-[45px] rounded-full cursor-pointer flex items-center justify-center transition-all duration-200 text-xl hover:bg-[#0077b6] hover:scale-105 active:scale-95 shrink-0">
+                        <HiPaperAirplane className="rotate-90" />
                         </button>
                     </form>
                     </>
                 ) : (
-                    <div className={s.noChatSelected}>
-                    <HiOutlineChatAlt2 className={s.noChatIcon} />
-                    <h3 className={s.noChatTitle}>Your Messages</h3>
+                    <div className="flex-1 flex flex-col items-center justify-center text-[#94a3b8] text-center p-10">
+                    <HiOutlineChatAlt2 className="w-20 h-20 mb-5 opacity-50" />
+                    <h3 className="font-bold">Your Messages</h3>
                     <p>Select a conversation to start chatting</p>
                     </div>
                 )}
