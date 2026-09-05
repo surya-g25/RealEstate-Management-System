@@ -94,12 +94,12 @@ const SellerDashboard = () => {
   const handleExport = () => {
     const headers = ["Title", "Location", "Type", "Price", "Status", "Views"];
     const csvRows = properties.map((p) => [
-      p.title,
-      `${p.area}, ${p.city}`,
-      p.propertyType,
-      p.price,
-      p.status,
-      p.views || 0,
+      `"${(p?.title || "N/A").replace(/"/g, '""')}"`,
+      `"${(p?.area || "")}, ${(p?.city || "")}"`,
+      p?.propertyType || "N/A",
+      p?.price || 0,
+      p?.status || "N/A",
+      p?.views || 0,
     ]);
 
     const csvContent = [headers, ...csvRows].map((e) => e.join(",")).join("\n");
@@ -153,11 +153,11 @@ const SellerDashboard = () => {
     ? properties
       .filter(
         (p) =>
-          p.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          p.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          p.area.toLowerCase().includes(searchTerm.toLowerCase()),
+          p?.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          p?.city?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          p?.area?.toLowerCase().includes(searchTerm.toLowerCase()),
       )
-      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0))
     : [];
 
   return (
@@ -263,9 +263,11 @@ const SellerDashboard = () => {
                       {inq.buyer?.name || "Potential buyer"}
                     </div>
                     <div className="text-[0.75rem] text-[#64748b]">
-                      {inq.property?.title?.length > 30
-                        ? inq.property?.title?.slice(0, 30) + "..."
-                        : inq.property.title}
+                      {inq.property?.title
+                        ? (inq.property.title.length > 30
+                            ? inq.property.title.slice(0, 30) + "..."
+                            : inq.property.title)
+                        : "Property Unavailable"}
                     </div>
                   </div>
                 </div>
@@ -273,8 +275,8 @@ const SellerDashboard = () => {
                   <div className="text-[0.7rem] text-[#94a3b8] mb-0.5">
                     {new Date(inq.createdAt).toLocaleDateString()}
                   </div>
-                  <span className={`py-0.5 px-2 rounded-full text-[0.65rem] font-extrabold uppercase ${inq.status === 'read' ? 'bg-[#f1f5f9] text-[#64748b]' : 'bg-primary-light text-primary'}`}>
-                    {inq.status === 'read' ? "Read" : "New"}
+                  <span className={`py-0.5 px-2 rounded-full text-[0.65rem] font-extrabold uppercase ${inq.isRead || inq.status === 'read' ? 'bg-[#f1f5f9] text-[#64748b]' : 'bg-primary-light text-primary'}`}>
+                    {inq.isRead || inq.status === 'read' ? "Read" : "New"}
                   </span>
                 </div>
               </div>

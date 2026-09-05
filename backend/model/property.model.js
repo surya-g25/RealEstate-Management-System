@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const propertySchema=new mongoose.Schema({
+const propertySchema = new mongoose.Schema({
     title: {
         type: String,
         required: true,
@@ -64,7 +64,11 @@ const propertySchema=new mongoose.Schema({
         enum: ["sale", "sold"],
         default: "sale",
     },
-    images: [{ type: String }],
+    images: [
+        {
+            type: String
+        }
+    ],
     seller: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
@@ -78,9 +82,13 @@ const propertySchema=new mongoose.Schema({
         type: Number,
         default: 0,
     },
-    viewedBy: [{ type: String }],
-},{timestamps:true});
+    viewedBy: [
+        {
+            type: String
+        }
+    ],
+}, { timestamps: true });
 
-const Property=mongoose.model("Property",propertySchema);
+const Property = mongoose.model("Property", propertySchema);
 
 export default Property;

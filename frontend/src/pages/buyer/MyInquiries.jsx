@@ -146,7 +146,9 @@ const MyInquiries = () => {
                   </div>
                   <div className="flex-1 min-w-0 w-full">
                     <div className="flex items-start md:items-center justify-between md:justify-start gap-3 mb-3 flex-wrap">
-                      <h3 className="text-[1.1rem] md:text-[1.25rem] font-bold text-text-main break-words">{inq.property?.title}</h3>
+                      <h3 className="text-[1.1rem] md:text-[1.25rem] font-bold text-text-main break-words">
+                        {inq.property?.title || "Property Unavailable"}
+                      </h3>
                       <span className={`badge shrink-0 px-2 py-1 text-xs whitespace-nowrap ${inq.isRead ? "bg-[#f1f5f9] text-[#64748b]" : "bg-[#eff6ff] text-[#2563eb]"}`}>
                         {inq.isRead ? "READ" : "NEW"}
                       </span>
@@ -186,9 +188,15 @@ const MyInquiries = () => {
                   </div>
                 </div>
                 <div className="flex flex-col sm:flex-row lg:flex-col gap-3 w-full lg:w-[160px] lg:shrink-0 lg:ml-6 pt-4 lg:pt-0 border-t border-[#f1f5f9] lg:border-t-0 justify-center">
-                  <Link to={`/property/${inq.property?._id}`} className="btn btn-outline py-2.5 px-4 md:py-3 w-full justify-center flex items-center gap-2 text-sm">
-                    View property <HiExternalLink />
-                  </Link>
+                  {inq.property?._id ? (
+                    <Link to={`/property/${inq.property._id}`} className="btn btn-outline py-2.5 px-4 md:py-3 w-full justify-center flex items-center gap-2 text-sm">
+                      View property <HiExternalLink />
+                    </Link>
+                  ) : (
+                    <span className="text-xs text-center text-[#94a3b8] py-2">
+                      Listing removed
+                    </span>
+                  )}
                   {isSeller && !inq.isRead && (
                     <button 
                       onClick={() => markAsRead(inq._id)} 

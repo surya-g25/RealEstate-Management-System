@@ -280,7 +280,7 @@ const PropertyDetails = () => {
                                         className={`wishlist-action-btn w-12 h-12 rounded-full border border-[#e2e8f0] bg-white flex items-center justify-center cursor-pointer transition-all duration-300 ease-in-out shadow-[0_4px_12px_rgba(0,0,0,0.1)] hover:scale-110 hover:shadow-[0_6px_16px_rgba(0,0,0,0.12)] hover:border-[#cbd5e1] ${isInWishlist ? "text-red-500" : "text-[#64748b]"}`}
                                     >
                                         {isInWishlist ? (
-                                            <HiHeart size={26} fill="ef4444" />
+                                            <HiHeart size={26} fill="#ef4444" />
                                         ) : (
                                             <HiOutlineHeart size={26} />
                                         )}
@@ -367,7 +367,7 @@ const PropertyDetails = () => {
                                             ₹
                                             {Number(property.securityDeposit || 0).toLocaleString(
                                                 "en-IN"
-                                             )}
+                                            )}
                                         </span>
                                     </div>
                                     <div className="flex justify-between text-[0.9rem] gap-4">

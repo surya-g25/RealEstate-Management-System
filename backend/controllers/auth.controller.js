@@ -6,9 +6,9 @@ import crypto from 'crypto';
 
 
 // register 
-export const register= async (req,res)=>{
+export const register = async (req, res) => {
     try {
-        const {name,email,password,role}=req.body;
+        const { name, email, password, role } = req.body;
         if (role === "admin") {
             return res.status(403).json({
                 message: "Direct registration as admin is not permitted",
@@ -17,120 +17,111 @@ export const register= async (req,res)=>{
         }
         const assignedRole = role === "seller" ? "seller" : "buyer";
         const normalizedEmail = email?.trim().toLowerCase();
-        const userExists=await User.findOne({email: normalizedEmail});
-        if(userExists)
-        {
+        const userExists = await User.findOne({ email: normalizedEmail });
+        if (userExists) {
             return res.status(400).json({
-                message:"User already exists",
+                message: "User already exists",
                 success: false
             })
         }
 
-        const hashedPassword=await bcrypt.hash(password,10);
-        const verificationToken=Math.floor(100000+Math.random()*900000).toString();
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const verificationToken = Math.floor(100000 + Math.random() * 900000).toString(); // generating the email OTP
 
-        const user=await User.create({
+        const user = await User.create({
             name,
             email: normalizedEmail,
-            password:hashedPassword,
+            password: hashedPassword,
             role: assignedRole,
-            isApproved:assignedRole==='seller'?false:true,
+            isApproved: assignedRole === 'seller' ? false : true,
             verificationToken
         })
         try {
             await sendEmail({
                 email,
-                subject:"Verify your Email",
-                message:`<p>Your Email verification code is <strong>${verificationToken}</strong></p><p>Please enter this code on the verification page to activate your account.</p>`
-            })           
+                subject: "Verify your Email - RealEstate Platform",
+                message: `<p>Your Email verification code is <strong>${verificationToken}</strong></p><p>Please enter this code on the verification page to activate your account.</p>`
+            })
         } catch (emailError) {
-            console.error("Failed to send verification email:",emailError);
+            console.error("Failed to send verification email:", emailError);
             // we will still create the user
         }
         return res.status(201).json({
-            message:"User registered. Please check your email for the verification code.",
-            user:{
-                email:user.email,
-                name:user.name,
-                role:user.role,
+            message: "User registered. Please check your email for the verification code.",
+            user: {
+                email: user.email,
+                name: user.name,
+                role: user.role,
             }
         });
-    } 
-    catch (err) 
-    {
+    }
+    catch (err) {
         res.status(500).json({
-            message:err.message
+            message: err.message
         })
     }
 }
 
 // login
-export const login=async(req,res)=>{
+export const login = async (req, res) => {
     try {
-        const {email,password}=req.body;
-        if(!email||!password)
-        {
+        const { email, password } = req.body;
+        if (!email || !password) {
             return res.status(400).json({
-                message:"Email and password are required."
+                message: "Email and password are required."
             });
         }
-        const user=await User.findOne({email});
-        if(!user)
-        {
+        const user = await User.findOne({ email });
+        if (!user) {
             return res.status(400).json({
-                message:"Invalid email or password."
+                message: "Invalid email or password."
             })
         }
-        if(!user.isVerified)
-        {
+        if (!user.isVerified) {
             return res.status(403).json({
-                message:"Please verify your email or contact support."
+                message: "Please verify your email or contact support."
             })
         }
-        const isMatch = await bcrypt.compare(password,user.password);
-        if(!isMatch)
-        {
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
             return res.status(400).json({
-                message:"Invalid email or password."
+                message: "Invalid email or password."
             })
         }
-        if(user.isBlocked)
-        {
+        if (user.isBlocked) {
             return res.status(403).json({
-                message:"Your account has been blocked by admin. Please contact support."
+                message: "Your account has been blocked by admin. Please contact support."
             })
         }
         //token
-        const token=jwt.sign({
-            id:user._id,
-            role:user.role,
-        },process.env.JWT_SECRET,{expiresIn:"7d"});
+        const token = jwt.sign({
+            id: user._id, //JWT payload
+            role: user.role,
+        }, process.env.JWT_SECRET, { expiresIn: "7d" });
 
-        const userResponse = user.toObject();
+        const userResponse = user.toObject(); //user is probably a Mongoose document, toObject() converts it into a normal JavaScript object
         delete userResponse.password;
 
         res.json({
-            message:"Login successfully.",
+            message: "Login successfully.",
             token,
             user: userResponse,
         });
-    } 
-    catch (err) 
-    {
+    }
+    catch (err) {
         res.status(500).json({
-            message:err.message
+            message: err.message
         })
     }
 }
 
 // to get Profile
-export const getMe=async(req,res)=>{
+export const getMe = async (req, res) => {
     try {
-        const user=await User.findById(req.user.id).select("-password");
-        if(!user)
-        {
+        const user = await User.findById(req.user.id).select("-password"); // req.user.id comes from middleware authentication
+        if (!user) {
             return res.status(404).json({
-                message:"User not found.",
+                message: "User not found.",
                 success: false
             })
         }
@@ -140,51 +131,44 @@ export const getMe=async(req,res)=>{
             user,
         })
     }
-    catch (err) 
-    {
+    catch (err) {
         res.status(500).json({
-            message:err.message
+            message: err.message
         })
     }
 }
 
 // to verify the email
-export const verifyEmail=async(req,res)=>{
+export const verifyEmail = async (req, res) => {
     try {
-        const {email,code}=req.body;
-        if(!email||!code)
-        {
+        const { email, code } = req.body;
+        if (!email || !code) {
             return res.status(400).json({
-                message:"Email and code are required."
+                message: "Email and code are required."
             })
         }
-        const user=await User.findOne({email})
-        if(!user)
-        {
-            return res.status(404).json({message:"User not found."})
+        const user = await User.findOne({ email })
+        if (!user) {
+            return res.status(404).json({ message: "User not found." })
         }
-        if(user.isVerified)
-        {
-            return res.status(400).json({message:"Email already verified."})
+        if (user.isVerified) {
+            return res.status(400).json({ message: "Email already verified." })
         }
-        if(user.verificationToken!==code)
-        {
-            return res.status(400).json({message:"Invalid verification code."})
+        if (user.verificationToken !== code) {
+            return res.status(400).json({ message: "Invalid verification code." })
         }
-        user.isVerified=true;
-        user.verificationToken=undefined;
+        user.isVerified = true;
+        user.verificationToken = undefined;
         await user.save();
         res.status(200).json({
-            message:"Email verifies successfully",
-            success:true
+            message: "Email verifies successfully",
+            success: true
         });
-
     }
-    catch (err) 
-    {
+    catch (err) {
         res.status(500).json({
-            message:err.message,
-            success:false
+            message: err.message,
+            success: false
         })
     }
 }
@@ -233,32 +217,31 @@ export const forgotPassword = async (req, res) => {
     }
 };
 
-// now to resst it (password)
-export const resetPassword=async(req,res)=>{
+// now to reset password
+export const resetPassword = async (req, res) => {
     try {
-        const {token}=req.params;
-        const {password}=req.body;
-        
-        const resetPasswordToken=crypto.createHash("sha256").update(token).digest("hex");
+        const { token } = req.params;
+        const { password } = req.body;
 
-        const user=await User.findOne({
+        const resetPasswordToken = crypto.createHash("sha256").update(token).digest("hex");
+
+        const user = await User.findOne({
             resetPasswordToken,
-            resetPasswordExpire: {$gt:Date.now()},
+            resetPasswordExpire: { $gt: Date.now() },
         });
 
-        if(!user)
-        {
-            return res.status(400).json({message:"Invalid or expired passsword reset token",success:false})
+        if (!user) {
+            return res.status(400).json({ message: "Invalid or expired passsword reset token", success: false })
         }
-        user.password=await bcrypt.hash(password,10);
-        user.resetPasswordToken=undefined;
-        user.resetPasswordExpire=undefined;
+        user.password = await bcrypt.hash(password, 10);
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpire = undefined;
         await user.save();
         res.status(200).json({
-            message:"Password updated successfully.",
-            success:true
+            message: "Password updated successfully.",
+            success: true
         });
-    } 
+    }
     catch (err) {
         res.status(500).json({ message: err.message, success: false });
     }

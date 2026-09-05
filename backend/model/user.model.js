@@ -1,56 +1,56 @@
 import mongoose from 'mongoose';
-const userSchema=new mongoose.Schema({
-    name:{
-        type:String,
-        required:true,
+const userSchema = new mongoose.Schema({
+    name: {
+        type: String,
+        required: true,
     },
-    email:{
-        type:String,
-        required:true,
-        unique:true,
-        trim:true,
-        lowercase:true,
+    email: {
+        type: String,
+        required: true,
+        unique: true,
+        trim: true,
+        lowercase: true,
     },
-    password:{
-        type:String,
-        required:true,
+    password: {
+        type: String,
+        required: true,
     },
-    role:{
-        type:String,
-        enum:["buyer","seller","admin"],
-        default:"buyer",
+    role: {
+        type: String,
+        enum: ["buyer", "seller", "admin"],
+        default: "buyer",
     },
-    phone:{
-        type:String,
+    phone: {
+        type: String,
     },
-    isBlocked:{
-        type:Boolean,
-        default:false
+    isBlocked: {
+        type: Boolean,
+        default: false
     },
-    profilePic:{
-        type:String,
+    profilePic: {
+        type: String, //store the URL, not the actual image
     },
-    address:{
-        type:String,
+    address: {
+        type: String,
     },
-    isApproved:{
-        type:Boolean,
-        default:true,
+    isApproved: {
+        type: Boolean,
+        default: true,
     },
-    isVerified:{
-        type:Boolean,
-        default:false
+    isVerified: {
+        type: Boolean,
+        default: false
     },
-    verificationToken:{
-        type:String
+    verificationToken: { // email OTP
+        type: String
     },
-    resetPasswordToken:{
-        type:String
+    resetPasswordToken: {
+        type: String
     },
-    resetPasswordExpire:{
-        type:Date
+    resetPasswordExpire: {
+        type: Date
     }
-},{timestamps:true});
+}, { timestamps: true });
 
-const User=mongoose.model("User",userSchema);
+const User = mongoose.model("User", userSchema);
 export default User;
