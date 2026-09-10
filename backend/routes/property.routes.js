@@ -1,21 +1,25 @@
 import express from "express";
-import {addProperty, deleteProperty, getAllProperties, getMyProperties, getPropertyCounts, getPropertyDetails, getSellerDashboard, updateProperty, updatePropertyStatus} from "../controllers/property.controller.js"
-import {authorize,protect} from "../middleware/auth.middleware.js"
+import { addProperty, deleteProperty, getAllProperties, getMyProperties, getPropertyCounts, getPropertyDetails, getSellerDashboard, updateProperty, updatePropertyStatus } from "../controllers/property.controller.js"
+import { authorize, protect } from "../middleware/auth.middleware.js"
 import upload from "../middleware/upload.middleware.js"
 
-const propertyRouter=express.Router();
+const propertyRouter = express.Router();
 
-propertyRouter.get("/",getAllProperties);
+propertyRouter.get("/", getAllProperties);
 
 // protect the routes that only seller can do these works
-propertyRouter.post("/",protect,authorize("seller"),upload.array("images",10),addProperty);
-propertyRouter.get("/my",protect,authorize("seller"),getMyProperties);
-propertyRouter.put("/:id",protect,authorize("seller"),upload.array("images",10),updateProperty); 
-propertyRouter.delete("/:id",protect,authorize("seller"),deleteProperty);
-propertyRouter.patch("/:id/status",protect,authorize("seller"),updatePropertyStatus);
 
-propertyRouter.get("/counts",getPropertyCounts);
-propertyRouter.get("/seller/dashboard",protect,authorize("seller"),getSellerDashboard);
-propertyRouter.get("/:id",getPropertyDetails);
+// protect : middleware to check if token exists or not 
+//authorize : to validate the user identity as  seller or buyer 
+
+propertyRouter.post("/", protect, authorize("seller"), upload.array("images", 10), addProperty);
+propertyRouter.get("/my", protect, authorize("seller"), getMyProperties);
+propertyRouter.put("/:id", protect, authorize("seller"), upload.array("images", 10), updateProperty);
+propertyRouter.delete("/:id", protect, authorize("seller"), deleteProperty);
+propertyRouter.patch("/:id/status", protect, authorize("seller"), updatePropertyStatus);
+
+propertyRouter.get("/counts", getPropertyCounts);
+propertyRouter.get("/seller/dashboard", protect, authorize("seller"), getSellerDashboard);
+propertyRouter.get("/:id", getPropertyDetails);
 
 export default propertyRouter;

@@ -21,7 +21,7 @@ const sendEmail = async (options) => {
         console.log("Email sent successfully via Resend:", response.data?.id);
 
     } catch (error) {
-        console.log("Resend email error:", error);
+        console.log("Resend email error:", error.message);
         throw new Error("Cannot send email via Resend");
     }
 };
