@@ -1,28 +1,38 @@
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY?.trim());
+const getResendClient = () => {
+    const apiKey = process.env.RESEND_API_KEY?.trim();
+    if (!apiKey) return null;
+    return new Resend(apiKey);
+};
 
 const sendEmail = async (options) => {
     try {
-        const RESEND_API_KEY = process.env.RESEND_API_KEY?.trim();
-
-        if (!RESEND_API_KEY) {
-            console.log("Missing RESEND_API_KEY in the .env file.");
-            throw new Error("Missing email api key");
+        const resend = getResendClient();
+        if (!resend) {
+            console.warn("RESEND_API_KEY is not configured in .env. Skipping email sending.");
+            throw new Error("Missing email API configuration");
         }
 
+        const from = process.env.EMAIL_USER?.trim() || "onboarding@resend.dev";
+
         const response = await resend.emails.send({
-            from: process.env.EMAIL_USER,     // e.g. onboarding@resend.dev or your verified domain
+            from,
             to: options.email,
             subject: options.subject,
             html: options.message,
         });
-        // console.log(response);
-        console.log("Email sent successfully via Resend:", response.data?.id);
 
+        if (response.error) {
+            console.error("Resend API error:", response.error);
+            throw new Error(response.error.message);
+        }
+
+        console.log("Email sent successfully via Resend:", response.data?.id);
+        return response.data;
     } catch (error) {
-        console.log("Resend email error:", error.message);
-        throw new Error("Cannot send email via Resend");
+        console.error("Resend email error:", error.message);
+        throw error;
     }
 };
 
