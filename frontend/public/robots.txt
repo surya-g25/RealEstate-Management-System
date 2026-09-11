@@ -1,0 +1,16 @@
+User-agent: *
+Allow: /
+Allow: /properties
+Allow: /property/*
+Disallow: /admin/
+Disallow: /admin-dashboard
+Disallow: /seller/
+Disallow: /seller-dashboard
+Disallow: /dashboard
+Disallow: /chat-messages
+Disallow: /inquiries
+Disallow: /profile
+Disallow: /verify-email
+Disallow: /reset-password/
+
+Sitemap: https://suryaworks.xyz/sitemap.xml
