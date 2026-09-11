@@ -9,7 +9,9 @@ const wishlistSchema=new mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,
         ref:"Property",
     }
-})
+});
+
+wishlistSchema.index({ user: 1, property: 1 }, { unique: true });
 
 const Wishlist=mongoose.model("Wishlist",wishlistSchema);
 

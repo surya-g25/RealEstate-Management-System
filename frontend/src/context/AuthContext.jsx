@@ -23,6 +23,25 @@ export const AuthProvider = ({ children }) => {
         navigate("/login");
     };
 
+    // to get user details
+    const refreshUser = async () => {
+        if (!token) return;
+        try {
+            const res = await axios.get(`${API_URL}/api/auth/me`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            if (res.data.success) {
+                const updatedUser = res.data.user;
+                setUser(updatedUser);
+                const storage = localStorage.getItem("token") ? localStorage : sessionStorage;
+                storage.setItem("user", JSON.stringify(updatedUser));
+            }
+        }
+        catch (err) {
+            console.error("Failed to refresh the user ", err);
+        }
+    };
+
     useEffect(() => {
         if (token) {
             try {
@@ -33,6 +52,7 @@ export const AuthProvider = ({ children }) => {
             } catch (e) {
                 console.error("Failed to parse stored user:", e);
             }
+            refreshUser();
         }
         setLoading(false);
         const interceptor = axios.interceptors.response.use(
@@ -41,9 +61,10 @@ export const AuthProvider = ({ children }) => {
                 const errorMsg = error.response?.data?.message;
                 if (
                     error.response &&
-                    error.response.status === 403 &&
-                    typeof errorMsg === "string" &&
-                    errorMsg.includes("blocked")
+                    (error.response.status === 401 ||
+                        (error.response.status === 403 &&
+                            typeof errorMsg === "string" &&
+                            errorMsg.includes("blocked")))
                 ) {
                     logout();
                 }
@@ -92,26 +113,6 @@ export const AuthProvider = ({ children }) => {
         }
     }
 
-
-
-    // to get user details
-    const refreshUser = async () => {
-        if (!token) return;
-        try {
-            const res = await axios.get(`${API_URL}/api/auth/me`, {
-                headers: { Authorization: `Bearer ${token}` },
-            })
-            if (res.data.success) {
-                const updatedUser = res.data.user;
-                setUser(updatedUser);
-                const storage = localStorage.getItem("token") ? localStorage : sessionStorage;
-                storage.setItem("user", JSON.stringify(updatedUser));
-            }
-        }
-        catch (err) {
-            console.error("Failed to refresh the user ", err);
-        }
-    }
     return <AuthContext.Provider value={{
         user,
         setUser,

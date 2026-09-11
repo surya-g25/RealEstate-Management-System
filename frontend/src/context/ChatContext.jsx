@@ -29,6 +29,10 @@ export const ChatProvider=({children})=>{
             setSocket(newSocket);
 
             newSocket.on("connect", () => {
+                if(user?._id)
+                {
+                    newSocket.emit("joinUser", user._id);
+                }
                 if(activeChatRef.current?._id)
                 {
                     newSocket.emit("joinChat", activeChatRef.current._id);
@@ -43,6 +47,7 @@ export const ChatProvider=({children})=>{
             };
 
             newSocket.on("receiveMessage", handleIncomingNotification);
+            newSocket.on("notification", handleIncomingNotification);
 
             return ()=>newSocket.close();
         }
@@ -61,13 +66,15 @@ export const ChatProvider=({children})=>{
         text,
         messaageId=null,
         createdAt=new Date(),
-        image=null
+        image=null,
+        recipientId=null
     )=>{
         if(socket && user)
         {
             const messageData={
                 chatId,
                 sender:user._id,
+                recipientId,
                 text,
                 image,
                 createdAt,

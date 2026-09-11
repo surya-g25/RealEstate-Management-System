@@ -160,13 +160,17 @@ const PropertyDetails = () => {
         maximumFractionDigits: 0,
     }).format(property.price);
 
+    const displayImages = property.images && property.images.length > 0
+        ? property.images
+        : ['https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=800&q=80'];
+
     const openLightbox = (index) => setLightboxIndex(index);
     const closeLightbox = () => setLightboxIndex(null);
     const nextImage = () =>
-        setLightboxIndex((prev) => (prev + 1) % property.images.length);
+        setLightboxIndex((prev) => (prev + 1) % displayImages.length);
     const prevImage = () =>
         setLightboxIndex(
-            (prev) => (prev - 1 + property.images.length) % property.images.length,
+            (prev) => (prev - 1 + displayImages.length) % displayImages.length,
         ); // open an image and go to next or prev one 
 
 
@@ -186,18 +190,18 @@ const PropertyDetails = () => {
                     <div className="property-gallery hidden md:grid gap-3 rounded-3xl overflow-hidden [&:has(>div:nth-child(2):last-child)]:!grid-cols-2 [&:has(>div:nth-child(2):last-child)>div]:!col-span-1 [&:has(>div:nth-child(2):last-child)>div]:!row-span-2 [&:has(>div:nth-child(3):last-child)]:!grid-cols-2 [&:has(>div:nth-child(3):last-child)>.main-image]:!col-span-1 [&:has(>div:nth-child(3):last-child)>.main-image]:!row-span-2 [&:has(>div:nth-child(4):last-child)>div:nth-child(2)]:!col-span-2"
                         style={{
                             gridTemplateColumns:
-                                property.images.length > 1 ? "repeat(4, 1fr)" : "1fr",
+                                displayImages.length > 1 ? "repeat(4, 1fr)" : "1fr",
                             gridTemplateRows:
-                                property.images.length > 1 ? "repeat(2, 180px)" : "400px",
+                                displayImages.length > 1 ? "repeat(2, 180px)" : "400px",
                         }}
                     >
-                        <div className={`gallery-item main-image relative overflow-hidden bg-[#f1f5f9] cursor-pointer ${property.images.length > 0 ? "col-span-2 row-span-2" : "col-span-1 row-span-1"}`}
+                        <div className={`gallery-item main-image relative overflow-hidden bg-[#f1f5f9] cursor-pointer ${displayImages.length > 0 ? "col-span-2 row-span-2" : "col-span-1 row-span-1"}`}
                             onClick={() => openLightbox(0)}>
 
-                            <img src={property.images[0]} alt="property image" className="w-full h-full object-cover transition-transform duration-400 ease" />
+                            <img src={displayImages[0]} alt="property image" className="w-full h-full object-cover transition-transform duration-400 ease" />
 
                         </div>
-                        {property.images.slice(1, 5).map((img, idx) => (
+                        {displayImages.slice(1, 5).map((img, idx) => (
                             <div key={idx}
                                 className="gallery-item relative overflow-hidden bg-[#f1f5f9] cursor-pointer"
                                 onClick={() => openLightbox(idx + 1)} // bcoz indexing start at 0 but the actual property image index starts at 1 , as the main image is already mentioned above
@@ -205,9 +209,9 @@ const PropertyDetails = () => {
                                 <img src={img} alt="image" className="w-full h-full object-cover transition-transform duration-400 ease" />
 
                                 {/* only show the overlay if there are more than 5 total images */}
-                                {idx == 3 && property.images.length > 5 && (
+                                {idx == 3 && displayImages.length > 5 && (
                                     <div className="absolute inset-0 bg-black/50 text-white flex items-center justify-center text-2xl font-bold pointer-events-none">
-                                        +{property.images.length - 5}
+                                        +{displayImages.length - 5}
                                     </div>
                                 )}
 
@@ -216,14 +220,14 @@ const PropertyDetails = () => {
                     </div>
                     <div className="mobile-gallery-wrapper block md:hidden -mx-4 mb-6">
                         <div className="mobile-slider flex overflow-x-auto snap-x snap-mandatory scroll-smooth p-0 whitespace-nowrap [&::-webkit-scrollbar]:hidden">
-                            {property.images.map((img, idx) => (
+                            {displayImages.map((img, idx) => (
                                 <div key={idx}
                                     className="mobile-slide flex-[0_0_100%] snap-start relative aspect-[4/3] overflow-hidden"
                                     onClick={() => openLightbox(idx)}
                                 >
                                     <img src={img} alt="images" className="w-full h-full object-cover" />
                                     <div className="slide-counter absolute bottom-4 right-4 bg-black/60 text-white py-1 px-3 rounded-2xl text-xs font-semibold">
-                                        {idx + 1}/{property.images.length}
+                                        {idx + 1}/{displayImages.length}
                                     </div>
                                 </div>
                             ))}
@@ -237,10 +241,10 @@ const PropertyDetails = () => {
                             <HiX size={24} className="text-primary" />
                         </button>
                         <div onClick={(e) => e.stopPropagation()} className="w-[85%] max-w-[900px] bg-white p-4 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.2)] relative">
-                            <img src={property.images[lightboxIndex]} alt="images"
+                            <img src={displayImages[lightboxIndex]} alt="images"
                                 className="w-full h-auto max-h-[72vh] object-contain rounded-2xl"
                             />
-                            {property.images.length > 1 && (
+                            {displayImages.length > 1 && (
                                 <>
                                     <button onClick={prevImage} className="absolute -left-[22px] top-1/2 -translate-y-1/2 bg-white border-none text-primary w-11 h-11 flex items-center justify-center cursor-pointer rounded-full shadow-[0_4px_12px_rgba(0,0,0,0.12)] transition-all duration-200 hover:bg-white/20 hover:scale-110">
                                         <HiChevronLeft size={30} />
@@ -251,7 +255,7 @@ const PropertyDetails = () => {
                                 </>
                             )}
                             <div className="absolute -bottom-[45px] left-1/2 -translate-x-1/2 text-white text-base font-semibold drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
-                                {lightboxIndex + 1}/{property.images.length}
+                                {lightboxIndex + 1}/{displayImages.length}
                             </div>
                         </div>
                     </div>
@@ -310,7 +314,7 @@ const PropertyDetails = () => {
                                 },
                                 {
                                     label: "Living Area",
-                                    value: `${property.areaSize} sqft`,
+                                    value: property.areaSize ? `${property.areaSize} sqft` : "N/A",
                                     icon: HiOutlineViewGrid,
                                 },
                                 {

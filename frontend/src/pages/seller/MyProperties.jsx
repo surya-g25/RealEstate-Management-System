@@ -74,13 +74,18 @@ const MyProperties = () => {
         )
     }
 
-    const getAvailableStatus = (p) => {
+    const getAvailableStatus = () => {
         return "sale";
     }
 
     return (
         <div className="fade-in">
             <div className="fade-in">
+                {error && (
+                    <div className="p-4 mb-6 bg-red-50 border border-red-200 text-red-700 rounded-xl">
+                        {error}
+                    </div>
+                )}
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 flex-wrap gap-6 my-props-header text-left">
                     <div>
                         <h1 className="text-[1.75rem] font-extrabold text-text-main mb-1">My Listings</h1>

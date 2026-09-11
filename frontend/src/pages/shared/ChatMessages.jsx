@@ -168,12 +168,15 @@ const ChatMessages = () => {
                     })
                 );
 
+                const partner = getChatPartner(activeChat);
+                const recipientId = partner?._id;
                 sendMessage(
                     activeChat._id,
                     textToSend,
                     savedMsg._id,
                     savedMsg.createdAt,
-                    savedMsg.image
+                    savedMsg.image,
+                    recipientId
                 );
             }   
             scrollToBottom(); 
@@ -227,7 +230,11 @@ const ChatMessages = () => {
         if(!chat) return null;
         const myId = user?._id?.toString();
         const buyerId = (chat.buyer?._id || chat.buyer)?.toString();
-        return myId === buyerId ? chat.seller : chat.buyer;
+        const partner = myId === buyerId ? chat.seller : chat.buyer;
+        if (!partner || typeof partner !== 'object') {
+            return { name: "User", profilePic: null };
+        }
+        return partner;
     }
 
     if(loading)
@@ -263,12 +270,12 @@ const ChatMessages = () => {
                                         {getChatPartner(chat)?.profilePic ? (
                                             <img src={getChatPartner(chat).profilePic} className="w-full h-full object-cover" alt=''/>
                                         ):(
-                                            getChatPartner(chat)?.name?.charAt(0)
+                                            getChatPartner(chat)?.name?.charAt(0) || "U"
                                         )}
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <div className="font-semibold text-[#1e293b] mb-1 whitespace-nowrap overflow-hidden text-ellipsis">
-                                            {getChatPartner(chat)?.name}
+                                            {getChatPartner(chat)?.name || "User"}
                                         </div>
                                         <div className="text-[0.85rem] text-[#64748b] whitespace-nowrap overflow-hidden text-ellipsis">
                                             {chat.messages.at(-1)?.text || "Started a conversation"}
@@ -303,52 +310,57 @@ const ChatMessages = () => {
                                 alt=""
                             />
                             ) : (
-                            getChatPartner(activeChat)?.name?.charAt(0)
+                            getChatPartner(activeChat)?.name?.charAt(0) || "U"
                             )}
                         </div>
                         <div className="font-bold text-[#1e293b]">
-                            {getChatPartner(activeChat)?.name}
+                            {getChatPartner(activeChat)?.name || "User"}
                         </div>
                         </div>
                     </div>
 
                     <div className="p-[15px] pb-[80px] md:p-[25px] md:pb-[25px] overflow-y-auto flex-1 flex flex-col gap-[15px] bg-[#f8fafc]">
-                        {messages.map((msg, idx) => (
-                        <div
-                            key={idx}
-                            className={`max-w-[85%] md:max-w-[70%] p-[12px_18px] rounded-[20px] text-[0.95rem] leading-[1.5] relative ${(msg.sender?._id || msg.sender) === user._id ? "self-end bg-[#00b4d8] text-white rounded-br-[4px] shadow-[0_4px_12px_rgba(0,180,216,0.2)]" : "self-start bg-white text-[#334155] rounded-bl-[4px] shadow-[0_4px_12px_rgba(0,0,0,0.05)]"}`}
-                        >
-                            <div className="flex items-start gap-2 break-all">
-                            {msg.image && (
-                                <div className="mb-2 rounded-lg overflow-hidden">
-                                <img
-                                    src={msg.image}
-                                    alt="Property Reference"
-                                    className="w-full max-h-[200px] object-cover block"
-                                />
-                                </div>
-                            )}
-                            <div className="break-all">{msg.text}</div>
-                            {(msg.sender?._id || msg.sender) === user._id && (
-                                <button
-                                className="bg-transparent border-none text-white/60 cursor-pointer p-0.5 rounded transition-all duration-200 mt-0.5 hover:text-white hover:bg-white/20"
-                                onClick={() =>
-                                    handleDeleteMessage(activeChat._id, msg._id)
-                                }
-                                title="Delete Message"
+                        {messages.map((msg, idx) => {
+                            const isMine = String(msg.sender?._id || msg.sender || '') === String(user?._id || '');
+                            return (
+                                <div
+                                    key={idx}
+                                    className={`max-w-[85%] md:max-w-[70%] p-[12px_18px] rounded-[20px] text-[0.95rem] leading-[1.5] relative ${isMine ? "self-end bg-[#00b4d8] text-white rounded-br-[4px] shadow-[0_4px_12px_rgba(0,180,216,0.2)]" : "self-start bg-white text-[#334155] rounded-bl-[4px] shadow-[0_4px_12px_rgba(0,0,0,0.05)]"}`}
                                 >
-                                <HiOutlineTrash size={14} />
-                                </button>
-                            )}
-                            </div>
-                            <span className="text-[0.75rem] mt-1.5 opacity-70 block">
-                            {new Date(msg.createdAt).toLocaleTimeString([], {
-                                hour: "2-digit",
-                                minute: "2-digit",
-                            })}
-                            </span>
-                        </div>
-                        ))}
+                                    <div className="flex flex-col gap-1.5">
+                                        {msg.image && (
+                                            <div className="rounded-lg overflow-hidden max-w-xs">
+                                                <img
+                                                    src={msg.image}
+                                                    alt="Property Reference"
+                                                    className="w-full max-h-[200px] object-cover block rounded-lg"
+                                                />
+                                            </div>
+                                        )}
+                                        <div className="flex items-start justify-between gap-2">
+                                            <div className="break-words select-text">{msg.text}</div>
+                                            {isMine && (
+                                                <button
+                                                    className="bg-transparent border-none text-white/70 cursor-pointer p-0.5 rounded transition-all duration-200 mt-0.5 hover:text-white hover:bg-white/20 shrink-0"
+                                                    onClick={() =>
+                                                        handleDeleteMessage(activeChat._id, msg._id)
+                                                    }
+                                                    title="Delete Message"
+                                                >
+                                                    <HiOutlineTrash size={14} />
+                                                </button>
+                                            )}
+                                        </div>
+                                    </div>
+                                    <span className="text-[0.75rem] mt-1.5 opacity-70 block">
+                                        {new Date(msg.createdAt).toLocaleTimeString([], {
+                                            hour: "2-digit",
+                                            minute: "2-digit",
+                                        })}
+                                    </span>
+                                </div>
+                            );
+                        })}
                         <div ref={messagesEndRef} />
                     </div>
 

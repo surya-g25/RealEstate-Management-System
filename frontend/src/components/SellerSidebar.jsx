@@ -5,7 +5,7 @@ import { HiOutlineChartBar, HiOutlineClipboardList, HiOutlineLogout, HiOutlineSu
 import { NavLink } from 'react-router-dom'
 
 const SellerSidebar = ({ isOpen, onClose }) => {
-    const { logout, user } = useAuth();
+    const { logout } = useAuth();
 
     const navItems = [
         { name: "Dashboard", icon: HiOutlineViewGrid, path: "/dashboard" },

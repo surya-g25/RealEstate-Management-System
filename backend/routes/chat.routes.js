@@ -40,16 +40,20 @@ chatRouter.post("/start",async(req,res)=>{
                 message:"Missing buyer or seller id"
             });
         }
+        if (buyerId.toString() === finalSellerId.toString()) {
+            return res.status(400).json({
+                message: "You cannot start a chat with yourself"
+            });
+        }
         // check for existing chat between buyer and seller 
-        let chat =await Chat.findOne({
+        let chat = await Chat.findOne({
             buyer:buyerId,
             seller:finalSellerId
         });
         if(!chat)
         {
             chat=await Chat.create({
-                property:propertyId,
-                Property:propertyId,
+                property:propertyId || null,
                 buyer:buyerId,
                 seller:finalSellerId,
                 messages:[],
@@ -183,6 +187,9 @@ chatRouter.get("/:chatId",async(req,res)=>{
 // to delete an entire chat 
 chatRouter.delete("/:chatId",async(req,res)=>{
     try {
+        if (!mongoose.isValidObjectId(req.params.chatId)) {
+            return res.status(404).json({ message: "Chat not found" });
+        }
         const userId=req.user._id;
         const chat=await Chat.findById(req.params.chatId);
         if(!chat)
@@ -212,6 +219,9 @@ chatRouter.delete("/:chatId",async(req,res)=>{
 // to delete a particular message
 chatRouter.delete("/:chatId/message/:messageId",async(req,res)=>{
     try {
+        if (!mongoose.isValidObjectId(req.params.chatId)) {
+            return res.status(404).json({ message: "Chat not found" });
+        }
         const userId=req.user._id;
         const chat=await Chat.findById(req.params.chatId);
         if(!chat)

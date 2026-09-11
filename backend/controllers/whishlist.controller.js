@@ -1,10 +1,17 @@
 import Property from "../model/property.model.js";
 import Wishlist from "../model/wishlist.model.js";
+import mongoose from "mongoose";
 
 // to add a property to wishlist
 export const addWishlist = async (req, res) => {
     try {
         const propertyId = req.params.propertyId;
+        if (!mongoose.isValidObjectId(propertyId)) {
+            return res.status(404).json({
+                success: false,
+                message: "Property not found"
+            });
+        }
         const propertyExists = await Property.findById(propertyId);
         if (!propertyExists) {
             return res.status(404).json({
@@ -60,6 +67,12 @@ export const getWishlist = async (req, res) => {
 export const removeWishlist = async (req, res) => {
     try {
         const propertyId = req.params.propertyId;
+        if (!mongoose.isValidObjectId(propertyId)) {
+            return res.status(404).json({
+                success: false,
+                message: "Wishlist item not found"
+            });
+        }
         const result = await Wishlist.findOneAndDelete({
             user: req.user._id,
             property: propertyId,

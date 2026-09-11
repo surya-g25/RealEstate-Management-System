@@ -14,16 +14,23 @@ import chatRouter from './routes/chat.routes.js';
 import { Server } from "socket.io";
 
 const app = express();
-const PORT = 8000;
+const PORT = process.env.PORT || 8000;
 
 // DB
 connectDB();
 
 // MIDLLEWARES
-const allowedOrigins = ["http://localhost:5173"].filter(Boolean);
+const allowedOrigins = [
+    "http://localhost:5173",
+    "http://localhost:5174",
+    "http://127.0.0.1:5173",
+    "http://127.0.0.1:5174",
+    process.env.CLIENT_URL,
+].filter(Boolean);
+
 app.use(cors({
     origin: function (origin, callback) {
-        if (!origin || allowedOrigins.includes(origin)) {
+        if (!origin || allowedOrigins.includes(origin) || origin.startsWith("http://localhost:")) {
             callback(null, true);
         }
         else {
@@ -50,17 +57,31 @@ const server = http.createServer(app);
 // socket.io setup
 const io = new Server(server, {
     cors: {
-        origin: allowedOrigins,
+        origin: (origin, callback) => {
+            if (!origin || allowedOrigins.includes(origin) || origin.startsWith("http://localhost:")) {
+                callback(null, true);
+            } else {
+                callback(new Error("Not allowed by CORS"));
+            }
+        },
         methods: ["GET", "POST"],
+        credentials: true
     },
 });
 io.on("connection", (socket) => {
     socket.on("joinChat", (chatId) => {
-        socket.join(chatId);
+        if (chatId) socket.join(String(chatId));
+    });
+    socket.on("joinUser", (userId) => {
+        if (userId) socket.join(String(userId));
     });
     socket.on("sendMessage", (data) => {
-        io.to(data.chatId).emit("receiveMessage", data);
-        // io.to(data.chatId).emit("recieveMessage",data);
+        if (data?.chatId) {
+            io.to(String(data.chatId)).emit("receiveMessage", data);
+        }
+        if (data?.recipientId) {
+            io.to(String(data.recipientId)).emit("receiveMessage", data);
+        }
     });
     socket.on("disconnect", () => {
         // do nothing

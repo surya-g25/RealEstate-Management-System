@@ -11,7 +11,7 @@ export const addProperty = async (req, res) => {
     let imageUrls = [];
     if (req.files && req.files.length > 0) {
       for (let file of req.files) {
-        const result = await uploadToCloudinary(file.buffer);
+        const result = await uploadToCloudinary(file.buffer, "properties");
         imageUrls.push(result.secure_url);
       }
     }
@@ -78,6 +78,12 @@ export const getMyProperties = async (req, res) => {
 // update a property
 export const updateProperty = async (req, res) => {
   try {
+    if (!mongoose.isValidObjectId(req.params.id)) {
+      return res.status(404).json({
+        success: false,
+        message: "Property not found",
+      });
+    }
     const property = await Property.findById(req.params.id);
     if (!property) {
       return res.status(404).json({
@@ -160,12 +166,18 @@ export const updateProperty = async (req, res) => {
 // to delete a property
 export const deleteProperty = async (req, res) => {
   try {
+    if (!mongoose.isValidObjectId(req.params.id)) {
+      return res.status(404).json({
+        success: false,
+        message: "Property not found",
+      });
+    }
     const property = await Property.findById(req.params.id);
     if (!property) {
       return res.status(404).json({
         success: false,
         message: "Property not found",
-      })
+      });
     }
     //to check the ownership
     if (property.seller.toString() !== req.user._id.toString()) {
@@ -206,6 +218,12 @@ export const deleteProperty = async (req, res) => {
 // to update property status
 export const updatePropertyStatus = async (req, res) => {
   try {
+    if (!mongoose.isValidObjectId(req.params.id)) {
+      return res.status(404).json({
+        success: false,
+        message: "Property not found",
+      });
+    }
     const property = await Property.findById(req.params.id);
     if (!property) {
       return res.status(404).json({
@@ -262,14 +280,16 @@ export const getAllProperties = async (req, res) => {
       seller,
     } = req.query;
 
+    const escapeRegex = (string) => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
     let query = {
       status: "sale",
     };
 
     if (seller) query.seller = seller;
-    if (city) query.city = new RegExp(city, "i"); // to make it case-insensitive
-    if (area) query.area = new RegExp(area, "i");
-    if (pincode) query.pincode = pincode;
+    if (city && city.trim()) query.city = new RegExp(escapeRegex(city.trim()), "i"); // to make it case-insensitive
+    if (area && area.trim()) query.area = new RegExp(escapeRegex(area.trim()), "i");
+    if (pincode && pincode.trim()) query.pincode = pincode.trim();
 
     if (propertyType) {
       query.propertyType = { $in: propertyType.toLowerCase().split(",") };
@@ -288,7 +308,13 @@ export const getAllProperties = async (req, res) => {
         $in: furnishingArray.map((f) => new RegExp(`^${f.trim()}$`, "i")),
       };
     }
-    if (status) query.status = status;
+    if (status) {
+      if (status.toLowerCase() === "all") {
+        delete query.status;
+      } else {
+        query.status = status;
+      }
+    }
 
     if (minPrice || maxPrice) {
       query.price = {};
@@ -360,11 +386,12 @@ export const getPropertyDetails = async (req, res) => {
       }
     }
     const isSellerChecking = property.seller?._id ? visitedId === property.seller._id.toString() : false;
-    if (!isSellerChecking && (!property.viewedBy || !property.viewedBy.includes(visitedId))) {
+    if (!isSellerChecking && visitedId && (!property.viewedBy || !property.viewedBy.includes(String(visitedId)))) {
+      await Property.findByIdAndUpdate(property._id, {
+        $inc: { views: 1 },
+        $addToSet: { viewedBy: String(visitedId) },
+      });
       property.views = (property.views || 0) + 1;
-      if (!property.viewedBy) property.viewedBy = [];
-      property.viewedBy.push(visitedId);
-      await property.save();
     }
     const similarProperties = await Property.find({
       _id: { $ne: property._id }, // $ne means: Not equal

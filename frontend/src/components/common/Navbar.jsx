@@ -33,6 +33,9 @@ const Navbar = () => {
           <Link to="/wishlist" className="nav-link text-text-main font-semibold text-[15px] px-4 py-2 rounded-3xl transition-all duration-300 no-underline hover:text-primary hover:bg-primary/10" onClick={() => setIsOpen(false)}>
             Wishlist
           </Link>
+          <Link to="/inquiries" className="nav-link text-text-main font-semibold text-[15px] px-4 py-2 rounded-3xl transition-all duration-300 no-underline hover:text-primary hover:bg-primary/10" onClick={() => setIsOpen(false)}>
+            Inquiries
+          </Link>
           <Link to="/chat-messages" className="nav-link text-text-main font-semibold text-[15px] px-4 py-2 rounded-3xl transition-all duration-300 no-underline hover:text-primary hover:bg-primary/10" onClick={() => setIsOpen(false)}>
             Messages
           </Link>

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useAuth } from "../../context/AuthContext"
 import PropertyCard from "../../components/common/PropertyCard"
 import { Link } from 'react-router-dom'
-import { HiOutlineExternalLink, HiOutlineTranslate, HiOutlineTrash } from 'react-icons/hi'
+import { HiOutlineExternalLink, HiOutlineTrash } from 'react-icons/hi'
 import axios from 'axios';
 import API_URL from '../../config.js';
 

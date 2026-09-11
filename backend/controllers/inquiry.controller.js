@@ -1,10 +1,23 @@
 import Inquiry from "../model/inquiry.model.js";
-import Property from "../model/property.model.js"
+import Property from "../model/property.model.js";
+import mongoose from "mongoose";
 
 //buyer send inquiry
 export const sendInquiry=async(req,res)=>{
     try {
         const {propertyId,message}=req.body;
+        if (!propertyId || !mongoose.isValidObjectId(propertyId)) {
+            return res.status(400).json({
+                success: false,
+                message: "A valid property ID is required."
+            });
+        }
+        if (!message || !message.trim()) {
+            return res.status(400).json({
+                success: false,
+                message: "Message cannot be empty."
+            });
+        }
         const property=await Property.findById(propertyId).populate("seller");
         if(!property)
         {
@@ -18,6 +31,12 @@ export const sendInquiry=async(req,res)=>{
             return res.status(400).json({
                 success: false,
                 message: "Property does not have an assigned seller."
+            });
+        }
+        if (req.user._id.toString() === sellerId.toString()) {
+            return res.status(400).json({
+                success: false,
+                message: "You cannot send an inquiry for your own property."
             });
         }
         const inquiry=await Inquiry.create({
@@ -87,6 +106,12 @@ export const getBuyerInquiries=async(req,res)=>{
 // to mark inquiry as read
 export const markAsRead=async(req,res)=>{
     try {
+        if (!mongoose.isValidObjectId(req.params.id)) {
+            return res.status(404).json({
+                success: false,
+                message: "Inquiry not found"
+            });
+        }
         const inquiry=await Inquiry.findById(req.params.id);
         if(!inquiry)
         {

@@ -92,7 +92,7 @@ const MyInquiries = () => {
 
   if (error) {
     return (
-      <div className={user?.role !== "seller" ? "bg-bg-alt min-h-screen" : "bg-transparent min-h-screen"}>
+      <div className={user?.role !== "seller" ? "bg-bg-alt min-h-screen pt-32 max-lg:pt-28" : "bg-transparent min-h-screen"}>
         {user?.role !== "seller" && <Navbar />}
         <div className="container py-12 text-center w-full mx-auto">
           <div className="card-premium py-16 px-4 md:px-8">
@@ -110,9 +110,9 @@ const MyInquiries = () => {
   const isSeller = user?.role === "seller";
 
   return (
-    <div className={user?.role === "seller" ? "bg-bg-alt min-h-screen" : "bg-transparent h-auto w-full"}>
+    <div className={user?.role === "seller" ? "bg-bg-alt min-h-screen" : "bg-bg-alt min-h-screen pt-32 max-lg:pt-28"}>
       {user?.role !== "seller" && <Navbar />}
-      <div className={`container fade-in w-full max-w-full px-4 sm:px-6 lg:px-8 overflow-hidden ${user?.role !== "seller" ? "py-12 pt-12" : "pt-0"}`}>
+      <div className={`container fade-in w-full max-w-full px-4 sm:px-6 lg:px-8 overflow-hidden ${user?.role !== "seller" ? "py-8" : "pt-0"}`}>
         <div className="mb-8 md:mb-12">
           <h1 className="text-[2rem] md:text-[2.5rem] mb-2 font-extrabold">
             {isSeller ? "Customer inquiries" : "My inquiries"}

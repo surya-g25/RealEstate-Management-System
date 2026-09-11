@@ -7,7 +7,7 @@ import API_URL from "../../config"
 import axios from "axios"
 
 const SellerDashboard = () => {
-  const { logout, token } = useAuth();
+  const { token } = useAuth();
   const [stats, setStats] = useState({
     totalProperties: 0,
     activeListings: 0,

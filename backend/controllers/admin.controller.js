@@ -1,6 +1,7 @@
 import User from "../model/user.model.js";
 import Property from "../model/property.model.js";
 import Inquiry from "../model/inquiry.model.js";
+import mongoose from "mongoose";
 
 // view all users
 export const getAllUsers = async (req, res) => {
@@ -23,6 +24,12 @@ export const getAllUsers = async (req, res) => {
 // to block a particular user
 export const blockUser = async (req, res) => {
     try {
+        if (!mongoose.isValidObjectId(req.params.id)) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found."
+            });
+        }
         if (req.user._id.toString() === req.params.id) {
             return res.status(400).json({
                 success: false,
@@ -56,6 +63,12 @@ export const blockUser = async (req, res) => {
 // to delete a particular user
 export const deleteUser = async (req, res) => {
     try {
+        if (!mongoose.isValidObjectId(req.params.id)) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found."
+            });
+        }
         if (req.user._id.toString() === req.params.id) {
             return res.status(400).json({
                 success: false,
@@ -103,7 +116,19 @@ export const getAllProperties = async (req, res) => {
 // to delete a particular property
 export const deleteProperty = async (req, res) => {
     try {
-        await Property.findByIdAndDelete(req.params.id);
+        if (!mongoose.isValidObjectId(req.params.id)) {
+            return res.status(404).json({
+                success: false,
+                message: "Property not found."
+            });
+        }
+        const property = await Property.findByIdAndDelete(req.params.id);
+        if (!property) {
+            return res.status(404).json({
+                success: false,
+                message: "Property not found."
+            });
+        }
         res.json({
             success: true,
             message: "Property deleted successfully."
@@ -186,6 +211,12 @@ export const getPendingSeller = async (req, res) => {
 // to approve a seller 
 export const approveSeller = async (req, res) => {
     try {
+        if (!mongoose.isValidObjectId(req.params.id)) {
+            return res.status(404).json({
+                success: false,
+                message: "Seller not found or user is not a seller"
+            });
+        }
         const seller = await User.findById(req.params.id);
         if (!seller || seller.role !== "seller") {
             return res.status(404).json({

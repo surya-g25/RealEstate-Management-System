@@ -9,6 +9,18 @@ import crypto from 'crypto';
 export const register = async (req, res) => {
     try {
         const { name, email, password, role } = req.body;
+        if (!name || !name.trim() || !email || !email.trim() || !password) {
+            return res.status(400).json({
+                message: "Name, email, and password are required.",
+                success: false
+            });
+        }
+        if (password.length < 6) {
+            return res.status(400).json({
+                message: "Password must be at least 6 characters long.",
+                success: false
+            });
+        }
         if (role === "admin") {
             return res.status(403).json({
                 message: "Direct registration as admin is not permitted",
@@ -16,7 +28,7 @@ export const register = async (req, res) => {
             });
         }
         const assignedRole = role === "seller" ? "seller" : "buyer";
-        const normalizedEmail = email?.trim().toLowerCase();
+        const normalizedEmail = email.trim().toLowerCase();
         const userExists = await User.findOne({ email: normalizedEmail });
         if (userExists) {
             return res.status(400).json({
@@ -147,7 +159,8 @@ export const verifyEmail = async (req, res) => {
                 message: "Email and code are required."
             })
         }
-        const user = await User.findOne({ email })
+        const normalizedEmail = email.trim().toLowerCase();
+        const user = await User.findOne({ email: normalizedEmail })
         if (!user) {
             return res.status(404).json({ message: "User not found." })
         }
@@ -177,7 +190,11 @@ export const verifyEmail = async (req, res) => {
 export const forgotPassword = async (req, res) => {
     try {
         const { email } = req.body;
-        const user = await User.findOne({ email });
+        if (!email) {
+            return res.status(400).json({ message: "Email is required.", success: false });
+        }
+        const normalizedEmail = email.trim().toLowerCase();
+        const user = await User.findOne({ email: normalizedEmail });
 
         if (!user) {
             return res.status(404).json({ message: "No user found with that email address" });
@@ -190,7 +207,7 @@ export const forgotPassword = async (req, res) => {
         user.resetPasswordExpire = resetPasswordExpire;
         await user.save();
 
-        const clientUrl = "http://localhost:5173";
+        const clientUrl = process.env.CLIENT_URL || "http://localhost:5173";
         const resetUrl = `${clientUrl}/reset-password/${resetToken}`;
         const message = `
             <h2>Password Reset Request</h2>
@@ -223,6 +240,13 @@ export const resetPassword = async (req, res) => {
         const { token } = req.params;
         const { password } = req.body;
 
+        if (!password || password.length < 6) {
+            return res.status(400).json({
+                message: "Password must be at least 6 characters long",
+                success: false,
+            });
+        }
+
         const resetPasswordToken = crypto.createHash("sha256").update(token).digest("hex");
 
         const user = await User.findOne({
@@ -231,7 +255,7 @@ export const resetPassword = async (req, res) => {
         });
 
         if (!user) {
-            return res.status(400).json({ message: "Invalid or expired passsword reset token", success: false })
+            return res.status(400).json({ message: "Invalid or expired password reset token", success: false })
         }
         user.password = await bcrypt.hash(password, 10);
         user.resetPasswordToken = undefined;

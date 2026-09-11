@@ -4,7 +4,7 @@ import { HiOutlineClock, HiOutlineRefresh, HiOutlineSupport } from 'react-icons/
 import { Link } from 'react-router-dom';
 
 const PendingApproval = () => {
-    const {logout,user,refreshUser}=useAuth();
+    const { user, refreshUser } = useAuth();
     const [refreshing,setRefreshing]=useState(false);
 
     //auto refresh
@@ -32,9 +32,9 @@ const PendingApproval = () => {
             Hello {user?.name}, your seller account is currently under review by our administration team. Approval usually takes less than 24 hours. You'll get full dashboard access on verified.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 w-full justify-center">
-            <a href='/properties' className="inline-flex items-center justify-center px-6 py-3 rounded-xl bg-slate-100 text-slate-700 font-semibold hover:bg-slate-200 transition-colors no-underline">
+            <Link to='/properties' className="inline-flex items-center justify-center px-6 py-3 rounded-xl bg-slate-100 text-slate-700 font-semibold hover:bg-slate-200 transition-colors no-underline">
                 Browse Properties
-            </a>
+            </Link>
             <button onClick={handleManualRefresh} disabled={refreshing}
                 className={`inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-200 shadow-sm ${ refreshing ? "bg-slate-100 text-slate-400 cursor-not-allowed" : 
                 "bg-primary text-white hover:bg-primary-dark cursor-pointer"}`} 

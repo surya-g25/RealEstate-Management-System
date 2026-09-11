@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import Navbar from '../../components/common/Navbar'
 import { HiCurrencyDollar, HiHome, HiLightningBolt, HiLocationMarker, HiMail, HiOfficeBuilding, HiPhone, HiSearch, HiShieldCheck, HiVideoCamera } from 'react-icons/hi'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import axios from 'axios'
 import API_URL from "../../config";
 import { useAuth } from "../../context/AuthContext"
 import banner from "../../assets/bannerimage.png"
 import PropertyCard from "../../components/common/PropertyCard"
 import { FaFacebookF, FaInstagram, FaLinkedinIn, FaTwitter } from "react-icons/fa"
-import logo from "../../assets/hexagonlogo1.png"
 
 const LandingPage = () => {
 
@@ -426,24 +425,24 @@ const LandingPage = () => {
               <h4 className="text-[1.125rem] font-extrabold mb-8">Company</h4>
               <ul className="flex flex-col gap-5 text-text-muted text-[0.9375rem]">
                 <li>
-                  <a href="/" className="footer-link transition-colors duration-300 hover:text-primary hover:underline">
+                  <Link to="/" className="footer-link transition-colors duration-300 hover:text-primary hover:underline">
                     Home
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="/properties" className="footer-link transition-colors duration-300 hover:text-primary hover:underline">
+                  <Link to="/properties" className="footer-link transition-colors duration-300 hover:text-primary hover:underline">
                     Property
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="/wishlist" className="footer-link transition-colors duration-300 hover:text-primary hover:underline">
+                  <Link to="/wishlist" className="footer-link transition-colors duration-300 hover:text-primary hover:underline">
                     Wishlist
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="/contact" className="footer-link transition-colors duration-300 hover:text-primary hover:underline">
+                  <Link to="/contact" className="footer-link transition-colors duration-300 hover:text-primary hover:underline">
                     Contact
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
