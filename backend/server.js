@@ -56,14 +56,17 @@ const parseAllowedOrigins = () => {
         "http://localhost:5173",
         "http://localhost:5174",
         "http://127.0.0.1:5173",
-        "http://127.0.0.1:5174"
+        "http://127.0.0.1:5174",
+        "https://suryaworks.xyz",
+        "https://www.suryaworks.xyz"
     ];
 
     const envUrls = [process.env.FRONTEND_URL, process.env.CLIENT_URL].filter(Boolean);
     envUrls.forEach((url) => {
-        // Support comma-separated URLs in env
-        url.split(',').forEach((singleUrl) => {
-            const trimmed = singleUrl.trim();
+        // Strip out brackets and outer quotes if user pasted JSON array or quotes in Render
+        const cleaned = url.replace(/^[\["'\s]+|[\]"'\s]+$/g, '');
+        cleaned.split(',').forEach((singleUrl) => {
+            const trimmed = singleUrl.trim().replace(/^["'\s]+|["'\s]+$/g, '').replace(/\/+$/, '');
             if (trimmed && !origins.includes(trimmed)) {
                 origins.push(trimmed);
             }
@@ -75,13 +78,35 @@ const parseAllowedOrigins = () => {
 
 const allowedOrigins = parseAllowedOrigins();
 
+export const isOriginAllowed = (origin) => {
+    if (!origin) return true; // Allow curl, server-to-server, Postman, health checks
+    if (!isProduction && origin.startsWith("http://localhost:")) return true;
+    if (allowedOrigins.includes(origin)) return true;
+
+    try {
+        const { hostname } = new URL(origin);
+        // Allow suryaworks.xyz and any subdomains (www, api, etc.)
+        if (hostname === 'suryaworks.xyz' || hostname.endsWith('.suryaworks.xyz')) {
+            return true;
+        }
+        // Allow Vercel deployment and preview URLs
+        if (hostname.endsWith('.vercel.app')) {
+            return true;
+        }
+        // Allow localhost
+        if (hostname === 'localhost' || hostname === '127.0.0.1') {
+            return true;
+        }
+    } catch {
+        return false;
+    }
+
+    return false;
+};
+
 const corsOptions = {
     origin: (origin, callback) => {
-        if (
-            !origin ||
-            allowedOrigins.includes(origin) ||
-            (!isProduction && origin.startsWith("http://localhost:"))
-        ) {
+        if (isOriginAllowed(origin)) {
             callback(null, true);
         } else {
             callback(new Error(`Origin ${origin} is not allowed by CORS`));
@@ -166,11 +191,7 @@ const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
         origin: (origin, callback) => {
-            if (
-                !origin ||
-                allowedOrigins.includes(origin) ||
-                (!isProduction && origin.startsWith("http://localhost:"))
-            ) {
+            if (isOriginAllowed(origin)) {
                 callback(null, true);
             } else {
                 callback(new Error(`Origin ${origin} is not allowed by CORS`));

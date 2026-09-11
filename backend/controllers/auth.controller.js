@@ -207,7 +207,9 @@ export const forgotPassword = async (req, res) => {
         user.resetPasswordExpire = resetPasswordExpire;
         await user.save();
 
-        const clientUrl = process.env.FRONTEND_URL || process.env.CLIENT_URL || "http://localhost:5173";
+        const rawClientUrl = process.env.FRONTEND_URL || process.env.CLIENT_URL || "http://localhost:5173";
+        const candidateUrls = rawClientUrl.split(',').map((u) => u.trim().replace(/\/+$/, ''));
+        const clientUrl = candidateUrls.find((u) => u.startsWith('https://')) || candidateUrls[0] || "http://localhost:5173";
         const resetUrl = `${clientUrl}/reset-password/${resetToken}`;
         const message = `
             <h2>Password Reset Request</h2>

@@ -13,7 +13,7 @@ export const errorHandler = (err, req, res, next) => {
     let message = err.message || "Internal Server Error";
 
     // Handle CORS error
-    if (err.message && err.message.includes("Not allowed by CORS")) {
+    if (err.message && err.message.toLowerCase().includes("not allowed by cors")) {
         statusCode = 403;
         message = "Origin blocked by CORS policy";
     }
